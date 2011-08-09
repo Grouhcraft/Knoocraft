@@ -15,9 +15,15 @@ public class KnoocraftPlayerListener extends PlayerListener {
 	public static boolean greenwhooling = false; 
 	public static int moins_Y = 1;
 
+	private int firstColor;
+	private int secondColor;
+	
     public KnoocraftPlayerListener(knoocraft instance) {
         plugin = instance;
-        Math.random();
+        Math.random();    
+        
+        firstColor = plugin.getConfig().getInt("greenwhooler.firstColor", 13);
+        secondColor = plugin.getConfig().getInt("greenwhooler.secondColor", 5);
     }
     
     @Override
@@ -32,8 +38,8 @@ public class KnoocraftPlayerListener extends PlayerListener {
 			{
     			double r = Math.random(); 
     			byte whool_color = 0;
-    			if(r < 0.33) 	whool_color = (byte)13;
-    			else			whool_color = (byte)5;
+    			if(r < 0.33) 	whool_color = (byte)firstColor;
+    			else			whool_color = (byte)secondColor;
     			
     			playerFrom.getBlock().setTypeIdAndData(Material.WOOL.getId(), (byte)whool_color, true);
 			}

@@ -1,5 +1,7 @@
 package knoodrake.knoocraft;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
@@ -11,6 +13,8 @@ import org.bukkit.plugin.PluginManager;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.config.Configuration;
+
 import java.util.logging.Logger;
 /**
 * KnooCraft plugin
@@ -21,6 +25,7 @@ public class knoocraft extends JavaPlugin {
     private final KnoocraftPlayerListener playerListener = new KnoocraftPlayerListener(this);
     private final KnoocraftBlockListener blockListener = new KnoocraftBlockListener(this);
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
+    private Configuration config;
     
     public static PermissionHandler permissionHandler;
     public static Logger log = Logger.getLogger("Minecraft");
@@ -28,8 +33,34 @@ public class knoocraft extends JavaPlugin {
     public void onDisable() {
         //
     }
+    
+    public knoocraft() throws IOException {
+    	new File("plugins" + File.separator + "Knoocraft" + File.separator).mkdirs();
+    	if(new File("plugins" + File.separator + "Knoocraft" + File.separator).exists()) {
+    		boolean newfile = new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml").createNewFile();
+    		if(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml").exists()) 
+    		{
+    			setConfig(new Configuration(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml")));
+    			if(newfile)
+    				createDefaultConfig();
+    		}
+    	}
+    }
 
-    public void onEnable() {
+    public Configuration getConfig() {
+		return config;
+	}
+
+	private void setConfig(Configuration config) {
+		this.config = config;
+	}
+
+	private void createDefaultConfig() {
+		getConfig().setProperty("greenwhooler.firstColor", 13);
+        getConfig().setProperty("greenwhooler.secondColor", 5);
+	}
+
+	public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);

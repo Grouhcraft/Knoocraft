@@ -2,6 +2,7 @@ package knoodrake.knoocraft;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -48,8 +49,12 @@ public class KcCommand implements CommandExecutor {
 		return x;
 	}
 	
-	private String getArg(int num){
-		return args[num+2];
+	private String getArg(int num) throws ArrayIndexOutOfBoundsException
+	{
+		int index = num + 1;
+		if(args.length >= index)
+			return args[index];
+		else throw new ArrayIndexOutOfBoundsException();
 	}
 	
 	private boolean cmdGetwhool() {
@@ -81,7 +86,7 @@ public class KcCommand implements CommandExecutor {
 			player.sendMessage(msg.format("  *<yellow/> yellow "));
 			player.sendMessage(msg.format("  *<brightgreen/> lightgreen "));
 			player.sendMessage(msg.format("  *<pink/> pink "));
-			player.sendMessage(msg.format("  *<darkgray/> gray "));
+			player.sendMessage(msg.format("  *<gray/> gray "));
 			player.sendMessage(msg.format("  *<gray/> lightgray "));
 			player.sendMessage(msg.format("  *<teal/> cyan "));
 			player.sendMessage(msg.format("  *<purple/> purple "));
@@ -93,8 +98,20 @@ public class KcCommand implements CommandExecutor {
 		}
 		else 
 		{	
-			int amount = Integer.parseInt(getArg(0));
-			String color = getArg(1);
+			int amount = 1;
+			String color = "";
+			try {
+				amount = Integer.parseInt(getArg(0));
+				color = getArg(1);
+			} catch (NumberFormatException e) {
+				try {
+					amount = Integer.parseInt(getArg(1));
+					color = getArg(0);					
+				} catch (NumberFormatException e2) {
+					args = new String[]{};
+					return cmdHelp();
+				}
+			}
 			
 			if(colors.containsKey(color)) {
 				Inventory inventory = player.getInventory();
@@ -102,7 +119,7 @@ public class KcCommand implements CommandExecutor {
 				inventory.addItem(coloredWhool);
 			} else {
 				player.sendMessage(msg.format("<red/> Couleur inconnue: " + color));
-				player.sendMessage(msg.format("Tappez <gold/>\"/kc list\"<white/> pour une liste des couleurs possibles."));
+				player.sendMessage(msg.format("Tappez <gold/>\"/kc getwhool list\"<white/> pour une liste des couleurs possibles."));
 				return false;
 			}
 		}
@@ -146,10 +163,12 @@ public class KcCommand implements CommandExecutor {
 		player.sendMessage(msg.format("<gray/>[ === <gold/>KnooCraft <gray/>==== ]"));
 		if(countCmdArgs() == 0) {
 			player.sendMessage(msg.format("<gray/>Commandes:"));
-			player.sendMessage(msg.format("<gold/>/kc help                     :<gray/> Affiche cet ecran d'aide."));
-			player.sendMessage(msg.format("<gold/>/kc help <commande>          :<gray/> Afficher l'aide de la commande"));
-			player.sendMessage(msg.format("<gold/>/kc greenwhooler <on/off>    :<gray/> Tapissage de sol de Nether"));
-			player.sendMessage(msg.format("<gold/>/kc sanitizehell [range] :<gray/> Assainissement de l'enfer."));
+			player.sendMessage(msg.format("<gold/>/kc help                   :<gray/> Affiche cet ecran d'aide."));
+			player.sendMessage(msg.format("<gold/>/kc help <commande>        :<gray/> Afficher l'aide de la commande"));
+			player.sendMessage(msg.format("<gold/>/kc greenwhooler <on/off>  :<gray/> Tapissage de sol de Nether"));
+			player.sendMessage(msg.format("<gold/>/kc sanitizehell [range]   :<gray/> Assainissement de l'enfer."));
+			player.sendMessage(msg.format("<gold/>/kc getwhool <color> <qty> :<gray/> Optention de laine coloree."));
+			player.sendMessage(msg.format("<gold/>/kc listalias              :<gray/> Liste les alias des commandes."));
 		} 
 		else {
 			player.sendMessage(msg.format("<gold/>aide des commandes en construction.."));
@@ -158,12 +177,13 @@ public class KcCommand implements CommandExecutor {
 	}
     
 	public boolean cmdUnknownCmd() {
-		player.sendMessage(msg.format("<red/>commande inconnue..:\""+ this.args[0] + "\""));
-		return false;
+		player.sendMessage(msg.format("<gray/>[ === <gold/>KnooCraft <gray/>==== ]"));
+		player.sendMessage(msg.format("<red/>commande knoocraft inconnue: <gray/>\""+ this.args[0] + "\""));
+		return true;
 	}
 	
 	private int countCmdArgs() {
-		return args.length - 2;
+		return args.length - 1;
 	}
 	
 	@Override
@@ -179,28 +199,44 @@ public class KcCommand implements CommandExecutor {
 			return false; 
 		
 		String mainCmd = split[0].toLowerCase();
-		String[][] commands = {
-				{"sanitizehell", "sh"},
-				{"greenwhooler", "gw"},
-				{"getwhool"}, 
-				{"help", "h", "/h", "/?", "?", "-h", "--help"}
-		};
-		addCommands(commands);
-		
+		if(aliases.isEmpty()) {
+			String[][] commands = {
+					{"sanitizehell", "sh"},
+					{"greenwhooler", "gw", "gwr"},
+					{"getwhool", "wool"}, 
+					{"help", "h", "/h", "/?", "?", "-h", "--help"},
+					{"listalias", "aliases"}
+			};
+			addCommands(commands);
+		}
 			 if(isCommandOrAlias(mainCmd, "sanitizehell"))	return cmdSanitizeHell();
 		else if(isCommandOrAlias(mainCmd, "greenwhooler"))	return cmdGreenWhooler();
 		else if(isCommandOrAlias(mainCmd, "getwhool")) 		return cmdGetwhool();
 		else if(isCommandOrAlias(mainCmd, "help"))			return cmdHelp();
+		else if(isCommandOrAlias(mainCmd, "listalias"))		return cmdListAliases();
 		else 												return cmdUnknownCmd();
+	}
+
+	private boolean cmdListAliases() {
+		Set<String> k = aliases.keySet();
+		for(String cmdName : k) {
+			player.sendMessage(msg.format("<gold/>" + cmdName + ": <gray/>" + aliases.get(cmdName).toString()));
+		}
+		return true;
 	}
 
 	private void addCommands(String[][] commands) {
 		for (String[] cmd : commands) {
-			aliases.put(cmd[0], new ArrayList<String>());
-			for(int i=0; i<cmd[0].length(); i++)
-				aliases.get(cmd[0]).add(cmd[i]);
+			//plugin.log.log(Level.INFO, "[KNOOCRAFT] adding aliases for.. cmd[0]:" + cmd[0]);
+			if(!aliases.containsKey(cmd[0])) {
+				aliases.put(cmd[0], new ArrayList<String>());
+			}
+			for(String alias : cmd) {
+				//plugin.log.log(Level.INFO, "[KNOOCRAFT] trying to add alias..:" + alias);
+				ArrayList<String> c = aliases.get(cmd[0]);
+				c.add(alias);
+			}
 		}
-		
 	}
 
 	private boolean isCommandOrAlias(String mainCmd, String string) {
