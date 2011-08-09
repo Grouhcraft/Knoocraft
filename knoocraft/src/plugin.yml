@@ -1,0 +1,7 @@
+name: Knoocraft
+main: knoodrake.knoocraft.knoocraft
+version: 0.1
+commands:
+    Kc:
+        description: do some stuff..
+        usage: /kc

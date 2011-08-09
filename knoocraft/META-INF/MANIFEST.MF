@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: knoocraft
+Bundle-SymbolicName: knoocraft
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: knoocraft.jar,
+ knoodake/Documents/Eclipse repository/bukkit-0.0.1-SNAPSHOT.jar,
+ knoodake/Desktop/CraftBukkit minecraft serveur/plugins/Permissions.jar
+Export-Package: knoodrake.knoocraft
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
