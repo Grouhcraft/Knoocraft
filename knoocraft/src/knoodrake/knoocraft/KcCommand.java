@@ -128,7 +128,7 @@ public class KcCommand implements CommandExecutor {
 	
 	public boolean cmdSanitizeHell() 
 	{
-		int range = 15;
+		int range = plugin.getConfig().getInt("sanitizehell.default_range", 15);
 		if(countCmdArgs() >= 1) 
 			range = Integer.parseInt(getArg(0));
 		
@@ -142,19 +142,23 @@ public class KcCommand implements CommandExecutor {
 		int maxZ = ploc.getBlockZ() + range;
 		int minY = ploc.getBlockY() - range;
 		int maxY = ploc.getBlockY() + range;
+		
+		Material replacedType  = Material.getMaterial(plugin.getConfig().getString("sanitizehell.replacedType", Material.FIRE.name()).toUpperCase());
+		Material replaceByType = Material.getMaterial(plugin.getConfig().getString("sanitizehell.replaceByType", Material.GLOWSTONE.name()).toUpperCase());
+		
 		int count_changes = 0;
 		for(int y=minY; y<maxY; y++){
 			for(int x=minX; x<maxX; x++){
 				for(int z=minZ; z<maxZ; z++){
 					Block b = world.getBlockAt(x, y, z);
-					if(b.getType() == Material.FIRE) {
-						b.setType(Material.GLOWSTONE);
+					if(b.getType() == replacedType) {
+						b.setType(replaceByType);
 						count_changes++;
 					}
 				}
 			}
 		}
-		player.sendMessage(msg.format("<pink/>" + count_changes + " <gold/>Fires have been stopped and now illuminate world nicely with glowstone !"));
+		player.sendMessage(msg.format("<pink/>" + count_changes + " <gold/>"+ replacedType.name().toLowerCase() +" have been fucked out and now illuminate world peacefully with "+ replaceByType.name().toLowerCase() +" !"));
 		return true;
 	}
 	

@@ -4,14 +4,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.config.Configuration;
 
 /**
  * Handle events for all Player related events
  * @author knoodrake 
  */
 public class KnoocraftPlayerListener extends PlayerListener {
-	@SuppressWarnings("unused")
-    private final knoocraft plugin;
+	private final knoocraft plugin;
 	public static boolean greenwhooling = false; 
 	public static int moins_Y = 1;
 
@@ -21,14 +21,16 @@ public class KnoocraftPlayerListener extends PlayerListener {
     public KnoocraftPlayerListener(knoocraft instance) {
         plugin = instance;
         Math.random();    
-        
-        firstColor = plugin.getConfig().getInt("greenwhooler.firstColor", 13);
-        secondColor = plugin.getConfig().getInt("greenwhooler.secondColor", 5);
     }
     
-    @Override
+    @SuppressWarnings("unused")
+	@Override
     public void onPlayerMove(PlayerMoveEvent event) {
     	if(KnoocraftPlayerListener.greenwhooling) {
+            
+    		firstColor  = plugin.getConfig().getInt("greenwhooler.firstColor", 13);
+            secondColor = plugin.getConfig().getInt("greenwhooler.secondColor", 5);
+            
     		Location playerFrom = event.getFrom().clone();
     		Location playerTo = event.getTo();
 			playerFrom.setY( playerFrom.getBlockY() -moins_Y);

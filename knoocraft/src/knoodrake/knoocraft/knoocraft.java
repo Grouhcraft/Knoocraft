@@ -3,6 +3,8 @@ package knoodrake.knoocraft;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
@@ -12,6 +14,8 @@ import org.bukkit.plugin.PluginManager;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
 
@@ -25,7 +29,8 @@ public class knoocraft extends JavaPlugin {
     private final KnoocraftPlayerListener playerListener = new KnoocraftPlayerListener(this);
     private final KnoocraftBlockListener blockListener = new KnoocraftBlockListener(this);
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
-    private Configuration config;
+    
+    public Configuration config;
     
     public static PermissionHandler permissionHandler;
     public static Logger log = Logger.getLogger("Minecraft");
@@ -35,12 +40,13 @@ public class knoocraft extends JavaPlugin {
     }
     
     public knoocraft() throws IOException {
+    	super();
     	new File("plugins" + File.separator + "Knoocraft" + File.separator).mkdirs();
     	if(new File("plugins" + File.separator + "Knoocraft" + File.separator).exists()) {
     		boolean newfile = new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml").createNewFile();
     		if(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml").exists()) 
     		{
-    			setConfig(new Configuration(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml")));
+    			this.config = new Configuration(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml"));
     			if(newfile)
     				createDefaultConfig();
     		}
@@ -51,13 +57,13 @@ public class knoocraft extends JavaPlugin {
 		return config;
 	}
 
-	private void setConfig(Configuration config) {
-		this.config = config;
-	}
-
 	private void createDefaultConfig() {
 		getConfig().setProperty("greenwhooler.firstColor", 13);
         getConfig().setProperty("greenwhooler.secondColor", 5);
+        getConfig().setProperty("sanitizehell.default_range", 15);
+        getConfig().setProperty("sanitizehell.replacedType", Material.FIRE.name().toLowerCase());
+        getConfig().setProperty("sanitizehell.replaceByType", Material.GLOWSTONE.name().toLowerCase());
+        getConfig().save();
 	}
 
 	public void onEnable() {
