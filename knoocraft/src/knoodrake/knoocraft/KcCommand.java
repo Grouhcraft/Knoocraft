@@ -2,15 +2,18 @@ package knoodrake.knoocraft;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,9 +21,7 @@ import org.bukkit.World;
 import knoodrake.knoocraft.KcMessaging;
 
 public class KcCommand implements CommandExecutor {
-	@SuppressWarnings("unused")
-	
-    private final knoocraft plugin;
+	private final knoocraft plugin;
 	private KcMessaging msg = new KcMessaging();
 	private String[] args = {};
 	private Player player = null;
@@ -49,6 +50,14 @@ public class KcCommand implements CommandExecutor {
 		return x;
 	}
 	
+	/**
+	 * Retourne un sous-paramètre de la commande.
+	 * Exemple pour <i>/kc getwhool white 64</i>
+	 * getArg(1) donnera <i>white</i>, et getArg(2) <i>64</i> 
+	 * @param num paramètre demandé (sa position)
+	 * @return la valeur du paramètre (le paramètre quoi)
+	 * @throws ArrayIndexOutOfBoundsException si on demande un param inexistant
+	 */
 	private String getArg(int num) throws ArrayIndexOutOfBoundsException
 	{
 		int index = num + 1;
@@ -57,6 +66,12 @@ public class KcCommand implements CommandExecutor {
 		else throw new ArrayIndexOutOfBoundsException();
 	}
 	
+	/**
+	 * Donne des blocs de laine dans la couleur et la quantité souhaité.
+	 * Remarque: les blocs arrivent directement dans l'inventaire. 
+	 * Excpetion non gérée si plus de place..
+	 * @return vrai si Ok.
+	 */
 	private boolean cmdGetwhool() {
 		HashMap<String, Short> colors = new HashMap<String, Short>();
 		colors.put("white", (short)0);
@@ -78,23 +93,23 @@ public class KcCommand implements CommandExecutor {
 		
 		if(getArg(0).equalsIgnoreCase("list"))
 		{
-			player.sendMessage(msg.format("====== colors: ======"));
-			player.sendMessage(msg.format("  *<white/> white "));
-			player.sendMessage(msg.format("  *<gold/> orange "));
-			player.sendMessage(msg.format("  *<red/> magenta "));
-			player.sendMessage(msg.format("  *<blue/> lightblue "));
-			player.sendMessage(msg.format("  *<yellow/> yellow "));
-			player.sendMessage(msg.format("  *<brightgreen/> lightgreen "));
-			player.sendMessage(msg.format("  *<pink/> pink "));
-			player.sendMessage(msg.format("  *<gray/> gray "));
-			player.sendMessage(msg.format("  *<gray/> lightgray "));
-			player.sendMessage(msg.format("  *<teal/> cyan "));
-			player.sendMessage(msg.format("  *<purple/> purple "));
-			player.sendMessage(msg.format("  *<darkblue/> blue "));
-			player.sendMessage(msg.format("  *<red/> brown "));
-			player.sendMessage(msg.format("  *<darkgreen/> darkgreen "));
-			player.sendMessage(msg.format("  *<darkred/> red "));
-			player.sendMessage(msg.format("  *<black/> black "));
+			say("====== colors: ======");
+			say("  *<white/> white ");
+			say("  *<gold/> orange ");
+			say("  *<red/> magenta ");
+			say("  *<blue/> lightblue ");
+			say("  *<yellow/> yellow ");
+			say("  *<brightgreen/> lightgreen ");
+			say("  *<pink/> pink ");
+			say("  *<gray/> gray ");
+			say("  *<gray/> lightgray ");
+			say("  *<teal/> cyan ");
+			say("  *<purple/> purple ");
+			say("  *<darkblue/> blue ");
+			say("  *<red/> brown ");
+			say("  *<darkgreen/> darkgreen ");
+			say("  *<darkred/> red ");
+			say("  *<black/> black ");
 		}
 		else 
 		{	
@@ -118,22 +133,27 @@ public class KcCommand implements CommandExecutor {
 				ItemStack coloredWhool = new ItemStack(Material.WOOL, amount, colors.get(color.toLowerCase()));
 				inventory.addItem(coloredWhool);
 			} else {
-				player.sendMessage(msg.format("<red/> Couleur inconnue: " + color));
-				player.sendMessage(msg.format("Tappez <gold/>\"/kc getwhool list\"<white/> pour une liste des couleurs possibles."));
+				say("<red/> Couleur inconnue: " + color);
+				say("Tappez <gold/>\"/kc getwhool list\"<white/> pour une liste des couleurs possibles.");
 				return false;
 			}
 		}
 		return true;
 	}
 	
+	/**
+	 * Remplace certains types de blocs par d'autre, choisis
+	 * dans les fichiers de conf.
+	 * @return un booléen
+	 */
 	public boolean cmdSanitizeHell() 
 	{
 		int range = plugin.getConfig().getInt("sanitizehell.default_range", 15);
 		if(countCmdArgs() >= 1) 
 			range = Integer.parseInt(getArg(0));
 		
-		player.sendMessage(msg.format("<gray/>[ === <gold/>KnooCraft <gray/>==== ]"));
-		player.sendMessage(msg.format("<pink/>Sanitize fire of Hell in a range of " + range));
+		say("<gray/>[ === <gold/>KnooCraft <gray/>==== ]");
+		say("<pink/>Sanitize fire of Hell in a range of " + range);
 		Location ploc = player.getLocation();
 		World world = ploc.getWorld();
 		int minX = ploc.getBlockX() - range;
@@ -158,34 +178,51 @@ public class KcCommand implements CommandExecutor {
 				}
 			}
 		}
-		player.sendMessage(msg.format("<pink/>" + count_changes + " <gold/>"+ replacedType.name().toLowerCase() +" have been fucked out and now illuminate world peacefully with "+ replaceByType.name().toLowerCase() +" !"));
+		say("<pink/>" + count_changes + " <gold/>"+ replacedType.name().toLowerCase() +" have been fucked out and now illuminate world peacefully with "+ replaceByType.name().toLowerCase() +" !");
 		return true;
 	}
 	
+	/**
+	 * Commande d'aide. Liste donc les commandes dispo, et l'aide.
+	 */
 	public boolean cmdHelp()
 	{
-		player.sendMessage(msg.format("<gray/>[ === <gold/>KnooCraft <gray/>==== ]"));
+		say("<gray/>[ === <gold/>KnooCraft <gray/>==== ]");
 		if(countCmdArgs() == 0) {
-			player.sendMessage(msg.format("<gray/>Commandes:"));
-			player.sendMessage(msg.format("<gold/>/kc help                   :<gray/> Affiche cet ecran d'aide."));
-			player.sendMessage(msg.format("<gold/>/kc help <commande>        :<gray/> Afficher l'aide de la commande"));
-			player.sendMessage(msg.format("<gold/>/kc greenwhooler <on/off>  :<gray/> Tapissage de sol de Nether"));
-			player.sendMessage(msg.format("<gold/>/kc sanitizehell [range]   :<gray/> Assainissement de l'enfer."));
-			player.sendMessage(msg.format("<gold/>/kc getwhool <color> <qty> :<gray/> Optention de laine coloree."));
-			player.sendMessage(msg.format("<gold/>/kc listalias              :<gray/> Liste les alias des commandes."));
+			say("<gray/>Commandes:");
+			say("<gold/>/kc help                             :<gray/> Affiche cet ecran d'aide.");
+			say("<gold/>/kc help <commande>                  :<gray/> Afficher l'aide de la commande");
+			say("<gold/>/kc greenwhooler <on/off>            :<gray/> Tapissage de sol de Nether");
+			say("<gold/>/kc sanitizehell [range]             :<gray/> Assainissement de l'enfer.");
+			say("<gold/>/kc getwhool <color> <qty>           :<gray/> Optention de laine coloree.");
+			say("<gold/>/kc listalias                        :<gray/> Liste les alias des commandes.");
+			say("<gold/>/kc give <item> [qtt] [\"inchest\"]  :<gray/> donne objet.");
+			say("<gold/>/kc eyetp                            :<gray/> tp sur curseur.");
 		} 
 		else {
-			player.sendMessage(msg.format("<gold/>aide des commandes en construction.."));
+			say("<gold/>aide des commandes en construction..");
 		}
 		return true;
 	}
     
+	/**
+	 * Commande executée lors d'une commande inconnue.
+	 * @return
+	 */
 	public boolean cmdUnknownCmd() {
-		player.sendMessage(msg.format("<gray/>[ === <gold/>KnooCraft <gray/>==== ]"));
-		player.sendMessage(msg.format("<red/>commande knoocraft inconnue: <gray/>\""+ this.args[0] + "\""));
+		say("<gray/>[ === <gold/>KnooCraft <gray/>==== ]");
+		say("<red/>commande knoocraft inconnue: <gray/>\""+ this.args[0] + "\"");
 		return true;
 	}
 	
+	/**
+	 * kc est une commande qui recoit des <i>sous-commandes</i>, par exemple pour <i>kc help</i> 
+	 * la commande pour bukkit est <i>kc</i>, mais pour KnooCraft, c'est <i>help</i>. 
+	 * Cette fonction retourne le nombre de paramètre de la commande KnooCraft.
+	 * Exemple: dans <i>kc help test test2</i>, il y à 3 params pour bukkit, mais 
+	 * cette fonction renverra 2 (test et test2) que sont les params de help.  
+	 * @return nombre de paramètres passés à la sous-commande
+	 */
 	private int countCmdArgs() {
 		return args.length - 1;
 	}
@@ -209,7 +246,10 @@ public class KcCommand implements CommandExecutor {
 					{"greenwhooler", "gw", "gwr"},
 					{"getwhool", "wool"}, 
 					{"help", "h", "/h", "/?", "?", "-h", "--help"},
-					{"listalias", "aliases"}
+					{"listalias", "aliases"},
+					{"give", "g"},
+					{"eyetp", "etp"},
+					{"musicman", "mm", "music"}
 			};
 			addCommands(commands);
 		}
@@ -218,17 +258,112 @@ public class KcCommand implements CommandExecutor {
 		else if(isCommandOrAlias(mainCmd, "getwhool")) 		return cmdGetwhool();
 		else if(isCommandOrAlias(mainCmd, "help"))			return cmdHelp();
 		else if(isCommandOrAlias(mainCmd, "listalias"))		return cmdListAliases();
+		else if(isCommandOrAlias(mainCmd, "give"))			return cmdGive();
+		else if(isCommandOrAlias(mainCmd, "eyetp"))			return cmdEyeTp();
+		else if(isCommandOrAlias(mainCmd, "musicman"))		return cmdMusicMan();
 		else 												return cmdUnknownCmd();
 	}
 
-	private boolean cmdListAliases() {
-		Set<String> k = aliases.keySet();
-		for(String cmdName : k) {
-			player.sendMessage(msg.format("<gold/>" + cmdName + ": <gray/>" + aliases.get(cmdName).toString()));
+	private boolean cmdMusicMan() {
+		say("EN CONSTRUCTION..");
+		if(KnoocraftPlayerListener.isMusicman())
+			KnoocraftPlayerListener.setMusicman(false, player.getLocation());
+		else 
+			KnoocraftPlayerListener.setMusicman(true, player.getLocation());
+		return true;
+	}
+
+	/**
+	 * Téléporte si possible le joueur à l'emplacement visée sous le curseur
+	 * @return
+	 */
+	private boolean cmdEyeTp() {
+		Location loc = player.getTargetBlock(null, 1024).getLocation();
+		loc.setY(loc.getBlockY() + 1);
+		player.teleport(loc);
+		return true;
+	}
+
+	/**
+	 * donne des objets (remplace la commande /give par défaut)
+	 * On peu donner l'ID ou le nom du matériau.
+	 * Usage: /kc give cobblestone 900 inchest
+	 * @return
+	 */
+	private boolean cmdGive() {
+		/* ---------------------------------------- */
+		/* 	Traitement des params
+		/* ---------------------------------------- */
+		if(countCmdArgs() >= 1) {
+			String tmp = getArg(0);
+			Material material = null;
+			try {
+				int id_blocktype = Integer.parseInt(tmp);
+				material = Material.getMaterial(id_blocktype);
+			} catch (Exception e) {
+				material = Material.getMaterial(tmp.toUpperCase(Locale.ENGLISH));
+			}
+			int qtt = (countCmdArgs() > 1) ? Integer.parseInt(getArg(1)) : 1;
+			boolean in_chest = false;
+			if(countCmdArgs() > 2)
+				if(getArg(2).equalsIgnoreCase("inchest"))
+					in_chest = true;
+			/* ---------------------------------------- */
+			/* 	Code
+			/* ---------------------------------------- */
+			
+			
+			Object destination;
+			ItemStack given = null;
+			destination = in_chest ?
+					(Object) player.getLocation().getBlock()
+					: (Object)player.getInventory();
+			
+					
+			given = new ItemStack(material, qtt);
+			
+			say(in_chest? "Donne des objets dans un coffre.." : "Donne des objets dans l'inventaire");
+			
+			if(in_chest) {
+				((Block)destination).setType(Material.CHEST);
+				((Chest) ((Block)destination).getState()).getInventory().addItem(given);
+			}
+			else ((PlayerInventory)destination).addItem(given);
+			
+		} else {
+			say("<red/>Usage: /kc give <objet|ID> [quantite]");
 		}
 		return true;
 	}
 
+	/**
+	 * Formate le msg & l'envoi au joueur courrant.
+	 * @param text
+	 */
+	private void say(String text) {
+		player.sendMessage(msg.format(text));
+	}
+
+	/**
+	 * Liste les alias utilisables des commandes
+	 * @return
+	 */
+	private boolean cmdListAliases() {
+		Set<String> k = aliases.keySet();
+		for(String cmdName : k) {
+			say("<gold/>" + cmdName + ": <gray/>" + aliases.get(cmdName).toString());
+		}
+		return true;
+	}
+
+	/**
+	 * Ajoute une commande à /kc
+	 * @param commands tableau de tableau. Exemple:<br/> 
+	 * <code>String[][] commands = {<br/>
+	 *      {"MaCommande", "alias1", "autrealias"},<br/>
+	 * 	    {"AutrCommande", "aliasAutrCommande"}<br/>
+	 * };</code>
+	 */
 	private void addCommands(String[][] commands) {
 		for (String[] cmd : commands) {
 			//plugin.log.log(Level.INFO, "[KNOOCRAFT] adding aliases for.. cmd[0]:" + cmd[0]);
@@ -243,10 +378,20 @@ public class KcCommand implements CommandExecutor {
 		}
 	}
 
+	/**
+	 * indique si la chaine passé correspond à la commande passée ou à un de ses alias.  
+	 * @param mainCmd chaine testée
+	 * @param string nom de la commande attendue
+	 * @return vrai si c'est bien la commande, faux sinon.
+	 */
 	private boolean isCommandOrAlias(String mainCmd, String string) {
 			return (aliases.get(string).contains(mainCmd));
 	}
 
+	/**
+	 * Démare le tapissage !
+	 * @return
+	 */
 	private boolean cmdGreenWhooler() 
 	{ 
 		if(countCmdArgs() >= 1) 
@@ -255,21 +400,21 @@ public class KcCommand implements CommandExecutor {
 			if(OnOff) 
 			{
 				KnoocraftPlayerListener.greenwhooling = true;
-				player.sendMessage(msg.format("[ <pink/>Greenwhooling began ]"));
+				say("[ <pink/>Greenwhooling began ]");
 			} 
 			else if (getArg(0).equalsIgnoreCase("off")) 
 			{
 				KnoocraftPlayerListener.greenwhooling = false;
-				player.sendMessage(msg.format("[ <pink/>Greenwhooling stopped ]"));
+				say("[ <pink/>Greenwhooling stopped ]");
 			}
 			else
 			{
-				player.sendMessage(msg.format("Usage: <gold/>/greenwhooler <on|off>"));
+				say("Usage: <gold/>/greenwhooler <on|off>");
 			}
 		} 
 		else 
 		{ 
-			player.sendMessage(msg.format("Usage: <gold/>/greenwhooler <on|off>"));
+			say("Usage: <gold/>/greenwhooler <on|off>");
 			return false;
 		}
 		return true;
