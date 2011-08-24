@@ -14,9 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+
+import com.sun.org.apache.xpath.internal.operations.Or;
 
 import knoodrake.knoocraft.KcMessaging;
 
@@ -361,7 +364,8 @@ public class KcCommand implements CommandExecutor {
 					{ "help", "h", "/h", "/?", "?", "-h", "--help" },
 					{ "listalias", "aliases" }, 
 					{ "give", "g" },
-					{ "eyetp", "etp" },  
+					{ "eyetp", "etp" },
+					{ "orient", "orientation", "compass" },
 			}; addCommands(commands);
 		}
 		if (isCommandOrAlias(mainCmd, "sanitizehell"))	return cmdSanitizeHell();
@@ -372,6 +376,7 @@ public class KcCommand implements CommandExecutor {
 		if (isCommandOrAlias(mainCmd, "listalias"))		return cmdListAliases();
 		if (isCommandOrAlias(mainCmd, "give"))			return cmdGive();
 		if (isCommandOrAlias(mainCmd, "eyetp"))			return cmdEyeTp();
+		if (isCommandOrAlias(mainCmd, "orient"))		return cmdOrientation();
 		else											return cmdUnknownCmd();
 	}
 
@@ -384,6 +389,75 @@ public class KcCommand implements CommandExecutor {
 		Location loc = player.getTargetBlock(null, 1024).getLocation();
 		loc.setY(loc.getBlockY() + 1);
 		player.teleport(loc);
+		return true;
+	}
+	
+	/**
+	 * Les 4 points cardinaux
+	 */
+	private enum Orientation {
+	    NORTH, // -1, 0, 0
+		SOUTH, // 1, 0, 0
+	    EAST, // 0, 0, -1
+	    WEST // 0 , 0, 1
+	}
+	
+	/**
+	 * Renvoie le point cardinal vers lequel est orienté le regard du joueur
+	 * 
+	 * @return Orientation
+	 */
+	private Orientation dirEye() {
+		Location eyeloc = player.getEyeLocation();
+		Vector dir = eyeloc.getDirection();
+		double dirx = dir.getX();
+		double dirz = dir.getZ();
+		if (dirz==dirx) {
+			if (dirx>=0) {
+				return Orientation.SOUTH;
+			}
+			return Orientation.NORTH;
+		}
+		if (dirz==-dirx) {
+			if (dirz>0) {
+				return Orientation.WEST;
+			}
+			return Orientation.EAST;
+		}
+		if (dirz<dirx) {
+			if (dirz>-dirx) {
+				return Orientation.SOUTH;
+			}
+			return Orientation.EAST;
+		}
+		// dirz > dirx
+		if (dirz>-dirx) {
+			return Orientation.WEST;
+		}
+		return Orientation.NORTH;
+	}
+	
+	/**
+	 * Affiche le point cardinal vers lequel est orienté le regard du joueur
+	 */
+	private boolean cmdOrientation() {
+		Orientation ori = dirEye();
+		if (ori == Orientation.NORTH) {
+			say("<gray/>Nord");
+		}
+		else {
+			if (ori == Orientation.SOUTH) {
+				say("<gray/>Sud");
+			}
+			else {
+				if (ori == Orientation.EAST) {
+					say("<gray/>Est");
+				}
+				else  {
+					say("<gray/>Ouest");
+				}
+			}
+		}
 		return true;
 	}
 
