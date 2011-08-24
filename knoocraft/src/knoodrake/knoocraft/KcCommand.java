@@ -210,7 +210,7 @@ public class KcCommand implements CommandExecutor {
 				for (int x=minX; x<=cou1X; x++) {
 					world.getBlockAt(x, y, z).setType(Material.DIRT);
 				}
-				for (int x=cou2X; x<=maxY; x++) {
+				for (int x=cou2X; x<=maxX; x++) {
 					world.getBlockAt(x, y, z).setType(Material.DIRT);
 				}
 			}
