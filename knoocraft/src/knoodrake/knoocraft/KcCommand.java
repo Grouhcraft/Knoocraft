@@ -27,7 +27,7 @@ public class KcCommand implements CommandExecutor {
 	private Player player = null;
 	private CommandSender sender = null;
 	private HashMap<String, ArrayList<String>> aliases = new HashMap<String, ArrayList<String>>();
-
+//toto
 	public KcCommand(knoocraft plugin) {
 		this.plugin = plugin;
 	}
