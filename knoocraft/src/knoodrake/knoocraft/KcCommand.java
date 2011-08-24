@@ -304,6 +304,7 @@ public class KcCommand implements CommandExecutor {
 			say("<gold/>/kc listalias :<gray/> Liste les alias des commandes.");
 			say("<gold/>/kc give <item> [qtt] [\"inchest\"] :<gray/> donne objet.");
 			say("<gold/>/kc eyetp :<gray/> tp sur curseur.");
+			say("<gold/>/kc penis [taille] :<gray/> bitize.");
 		} else {
 			say("<gold/>aide des commandes en construction..");
 		}
@@ -351,43 +352,26 @@ public class KcCommand implements CommandExecutor {
 
 		String mainCmd = split[0].toLowerCase();
 		if (aliases.isEmpty()) {
-			String[][] commands = { { "sanitizehell", "sh" },
-					{ "greenwhooler", "gw", "gwr" }, { "getwhool", "wool" },
+			String[][] commands = { 
+					{ "sanitizehell", "sh" },
+					{ "greenwhooler", "gw", "gwr" }, 
+					{ "getwhool", "wool" },
 					{ "penis", "bite" },
 					{ "help", "h", "/h", "/?", "?", "-h", "--help" },
-					{ "listalias", "aliases" }, { "give", "g" },
-					{ "eyetp", "etp" }, { "musicman", "mm", "music" } };
-			addCommands(commands);
+					{ "listalias", "aliases" }, 
+					{ "give", "g" },
+					{ "eyetp", "etp" },  
+			}; addCommands(commands);
 		}
-		if (isCommandOrAlias(mainCmd, "sanitizehell"))
-			return cmdSanitizeHell();
-		else if (isCommandOrAlias(mainCmd, "greenwhooler"))
-			return cmdGreenWhooler();
-		else if (isCommandOrAlias(mainCmd, "getwhool"))
-			return cmdGetwhool();
-		else if (isCommandOrAlias(mainCmd, "penis"))
-			return cmdPenis();
-		else if (isCommandOrAlias(mainCmd, "help"))
-			return cmdHelp();
-		else if (isCommandOrAlias(mainCmd, "listalias"))
-			return cmdListAliases();
-		else if (isCommandOrAlias(mainCmd, "give"))
-			return cmdGive();
-		else if (isCommandOrAlias(mainCmd, "eyetp"))
-			return cmdEyeTp();
-		else if (isCommandOrAlias(mainCmd, "musicman"))
-			return cmdMusicMan();
-		else
-			return cmdUnknownCmd();
-	}
-
-	private boolean cmdMusicMan() {
-		say("EN CONSTRUCTION..");
-		if (KnoocraftPlayerListener.isMusicman())
-			KnoocraftPlayerListener.setMusicman(false, player.getLocation());
-		else
-			KnoocraftPlayerListener.setMusicman(true, player.getLocation());
-		return true;
+		if (isCommandOrAlias(mainCmd, "sanitizehell"))	return cmdSanitizeHell();
+		if (isCommandOrAlias(mainCmd, "greenwhooler"))	return cmdGreenWhooler();
+		if (isCommandOrAlias(mainCmd, "getwhool"))		return cmdGetwhool();
+		if (isCommandOrAlias(mainCmd, "penis"))			return cmdPenis();
+		if (isCommandOrAlias(mainCmd, "help"))			return cmdHelp();
+		if (isCommandOrAlias(mainCmd, "listalias"))		return cmdListAliases();
+		if (isCommandOrAlias(mainCmd, "give"))			return cmdGive();
+		if (isCommandOrAlias(mainCmd, "eyetp"))			return cmdEyeTp();
+		else											return cmdUnknownCmd();
 	}
 
 	/**
