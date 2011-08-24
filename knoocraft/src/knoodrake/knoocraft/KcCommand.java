@@ -32,26 +32,29 @@ public class KcCommand implements CommandExecutor {
 		this.plugin = plugin;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean checkPerm(String node) {
-		boolean x = ((this.plugin).permissionHandler.has(player, node));
+		boolean x = (knoocraft.permissionHandler.has(player, node));
 		if (!x)
-			this.plugin.log.log(Level.WARNING,
+			knoocraft.log.log(Level.WARNING,
 					msg.format("<red/> checkPerm: fails"));
 		return x;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean checkIsPlayer() {
 		boolean x = sender.getClass().getName().equals("Player");
 		if (!x)
-			this.plugin.log.log(Level.WARNING,
+			knoocraft.log.log(Level.WARNING,
 					msg.format("<red/> checkIsPlayer: fails"));
 		return x;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean checkOp() {
 		boolean x = player.isOp();
 		if (!x)
-			this.plugin.log.log(Level.WARNING,
+			knoocraft.log.log(Level.WARNING,
 					msg.format("<red/> checkOp: fails"));
 		return x;
 	}
