@@ -21,7 +21,8 @@ import org.bukkit.World;
 import knoodrake.knoocraft.KcMessaging;
 
 public class KcCommand implements CommandExecutor {
-	private final knoocraft plugin;
+	
+    private final knoocraft plugin;
 	private KcMessaging msg = new KcMessaging();
 	private String[] args = {};
 	private Player player = null;
@@ -32,21 +33,24 @@ public class KcCommand implements CommandExecutor {
         this.plugin = plugin;
     } 
 	
+	@SuppressWarnings("unused")
 	private boolean checkPerm(String node){
-		boolean x = ((this.plugin).permissionHandler.has(player, node));
-		if(!x) this.plugin.log.log(Level.WARNING ,msg.format("<red/> checkPerm: fails"));
+		boolean x = (knoocraft.permissionHandler.has(player, node));
+		if(!x) knoocraft.log.log(Level.WARNING ,msg.format("<red/> checkPerm: fails"));
 		return x;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean checkIsPlayer() {
 		boolean x = sender.getClass().getName().equals("Player");
-		if(!x) this.plugin.log.log(Level.WARNING ,msg.format("<red/> checkIsPlayer: fails"));
+		if(!x) knoocraft.log.log(Level.WARNING ,msg.format("<red/> checkIsPlayer: fails"));
 		return x;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean checkOp() {
 		boolean x = player.isOp();
-		if(!x) this.plugin.log.log(Level.WARNING ,msg.format("<red/> checkOp: fails"));
+		if(!x) knoocraft.log.log(Level.WARNING ,msg.format("<red/> checkOp: fails"));
 		return x;
 	}
 	
@@ -236,7 +240,7 @@ public class KcCommand implements CommandExecutor {
 	 */
 	public boolean cmdSanitizeHell() 
 	{
-		int range = plugin.getConfig().getInt("sanitizehell.default_range", 15);
+		int range = plugin.getConfig().getInt("sanitizehell.default_range", R.getInt("sanitizehell.default_range"));
 		if(countCmdArgs() >= 1) 
 			range = Integer.parseInt(getArg(0));
 		
