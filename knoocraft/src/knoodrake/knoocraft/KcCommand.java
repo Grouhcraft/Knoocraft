@@ -141,6 +141,94 @@ public class KcCommand implements CommandExecutor {
 		return true;
 	}
 	
+	public boolean cmdPenis() 
+	{
+		int size = plugin.getConfig().getInt("penis.default_size", 3);
+		if(countCmdArgs() >= 1) 
+			size = Integer.parseInt(getArg(0));
+		if (size > 30) {
+			say("<pink/>"+ size + "??? Mais quelle idée de vouloir faire une bite aussi grosse !!! Elle ne fera que 30, et c'est déjà pas mal.");
+			size = 30;
+		}
+		say("<pink/>Bite de taille " + size);
+		Location ploc = player.getLocation();
+		World world = ploc.getWorld();
+		int air = Material.AIR.getId();
+		
+		int ray;
+		if (size%2==1) {
+			ray = (3 * size - 1) / 2;
+		}
+		else {
+			 ray = 3 * (size/2) - 1;
+		}
+		
+		// Min et max horizontal 1ere coordonnée
+		int minX = ploc.getBlockX() - ray;
+		int maxX = ploc.getBlockX() + ray;
+		// 2nde coordonnée horizontale : constante car plat
+		int z = ploc.getBlockZ();
+		// Min et max vertical
+		int minY = ploc.getBlockY() + 2;
+		int maxY = ploc.getBlockY() + 4 * size + 1;
+				
+		// Autres points de repere horizontaux
+		int cou1X = minX + size - 1;
+		int cou2X = maxX - size + 1;
+		
+		// Autres points de repere verticaux
+		int maxcouY = minY + size - 1;
+		int minglaY = maxcouY + 2 * size + 1;
+		
+		boolean libre = true;
+		
+		for (int y=minY; y<=maxcouY; y++) {
+			for (int x=minX; x<=cou1X; x++) {
+				if (world.getBlockTypeIdAt(x,y,z)!=air) {
+					libre = false;
+				}	
+			}
+			for (int x=cou2X; x<=maxY; x++) {
+				if (world.getBlockTypeIdAt(x,y,z)!=air) {
+					libre = false;
+				}	
+			}
+		}
+		for (int y = maxcouY + 1; y<=maxY; y++) {
+			for (int x=cou1X + 1; x<cou2X; x++) {
+				if (world.getBlockTypeIdAt(x,y,z)!=air) {
+					libre = false;
+				}	
+			}
+		}
+		
+		if (!libre) {
+			say("<pink/>Il n'y a pas la place suffisante pour un tel engin ici. Veuillez remonter votre braguette.");
+		}
+		else {
+			for (int y=minY; y<=maxcouY; y++) {
+				for (int x=minX; x<=cou1X; x++) {
+					world.getBlockAt(x, y, z).setType(Material.DIRT);
+				}
+				for (int x=cou2X; x<=maxY; x++) {
+					world.getBlockAt(x, y, z).setType(Material.DIRT);
+				}
+			}
+			for (int x=cou1X + 1; x<cou2X; x++) {
+				for (int y = maxcouY + 1; y<minglaY; y++) {
+					world.getBlockAt(x, y, z).setType(Material.WOOL);
+					world.getBlockAt(x, y, z).setData((byte)6);
+				}
+				for (int y = minglaY; y<=maxY; y++) {
+					world.getBlockAt(x, y, z).setType(Material.NETHERRACK);
+				}
+			}
+		}
+		
+		return true;
+		
+	}
+	
 	/**
 	 * Remplace certains types de blocs par d'autre, choisis
 	 * dans les fichiers de conf.
@@ -245,6 +333,7 @@ public class KcCommand implements CommandExecutor {
 					{"sanitizehell", "sh"},
 					{"greenwhooler", "gw", "gwr"},
 					{"getwhool", "wool"}, 
+					{"penis", "bite"},
 					{"help", "h", "/h", "/?", "?", "-h", "--help"},
 					{"listalias", "aliases"},
 					{"give", "g"},
@@ -256,6 +345,7 @@ public class KcCommand implements CommandExecutor {
 			 if(isCommandOrAlias(mainCmd, "sanitizehell"))	return cmdSanitizeHell();
 		else if(isCommandOrAlias(mainCmd, "greenwhooler"))	return cmdGreenWhooler();
 		else if(isCommandOrAlias(mainCmd, "getwhool")) 		return cmdGetwhool();
+		else if(isCommandOrAlias(mainCmd, "penis")) 		return cmdPenis();
 		else if(isCommandOrAlias(mainCmd, "help"))			return cmdHelp();
 		else if(isCommandOrAlias(mainCmd, "listalias"))		return cmdListAliases();
 		else if(isCommandOrAlias(mainCmd, "give"))			return cmdGive();
