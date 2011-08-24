@@ -350,6 +350,7 @@ public class KcCommand implements CommandExecutor {
 		if (split.length < 1)
 			return false;
 
+		//grouhnette qui pouette
 		String mainCmd = split[0].toLowerCase();
 		if (aliases.isEmpty()) {
 			String[][] commands = { 
