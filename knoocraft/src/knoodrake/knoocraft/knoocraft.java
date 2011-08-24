@@ -14,7 +14,6 @@ import org.bukkit.plugin.PluginManager;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
@@ -58,11 +57,12 @@ public class knoocraft extends JavaPlugin {
 	}
 
 	private void createDefaultConfig() {
-		getConfig().setProperty("greenwhooler.firstColor", 13);
-        getConfig().setProperty("greenwhooler.secondColor", 5);
-        getConfig().setProperty("sanitizehell.default_range", 15);
+		getConfig().setProperty("greenwhooler.firstColor", R.getInt("greenwhooler.firstColor"));
+        getConfig().setProperty("greenwhooler.secondColor", R.getInt("greenwhooler.secondColor"));
+        getConfig().setProperty("sanitizehell.default_range", R.getInt("sanitizehell.default_range"));
         getConfig().setProperty("sanitizehell.replacedType", Material.FIRE.name().toLowerCase());
         getConfig().setProperty("sanitizehell.replaceByType", Material.GLOWSTONE.name().toLowerCase());
+        getConfig().setProperty("penis.default_size", R.getInt("penis.default_size"));
         getConfig().save();
 	}
 

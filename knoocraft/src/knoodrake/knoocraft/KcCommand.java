@@ -15,10 +15,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import sun.security.action.GetBooleanAction;
+
 import knoodrake.knoocraft.KcMessaging;
 
 public class KcCommand implements CommandExecutor {
-	@SuppressWarnings("unused")
 	
     private final knoocraft plugin;
 	private KcMessaging msg = new KcMessaging();
@@ -31,21 +32,24 @@ public class KcCommand implements CommandExecutor {
         this.plugin = plugin;
     } 
 	
+	@SuppressWarnings("unused")
 	private boolean checkPerm(String node){
-		boolean x = ((this.plugin).permissionHandler.has(player, node));
-		if(!x) this.plugin.log.log(Level.WARNING ,msg.format("<red/> checkPerm: fails"));
+		boolean x = (knoocraft.permissionHandler.has(player, node));
+		if(!x) knoocraft.log.log(Level.WARNING ,msg.format("<red/> checkPerm: fails"));
 		return x;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean checkIsPlayer() {
 		boolean x = sender.getClass().getName().equals("Player");
-		if(!x) this.plugin.log.log(Level.WARNING ,msg.format("<red/> checkIsPlayer: fails"));
+		if(!x) knoocraft.log.log(Level.WARNING ,msg.format("<red/> checkIsPlayer: fails"));
 		return x;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean checkOp() {
 		boolean x = player.isOp();
-		if(!x) this.plugin.log.log(Level.WARNING ,msg.format("<red/> checkOp: fails"));
+		if(!x) knoocraft.log.log(Level.WARNING ,msg.format("<red/> checkOp: fails"));
 		return x;
 	}
 	
@@ -126,9 +130,49 @@ public class KcCommand implements CommandExecutor {
 		return true;
 	}
 	
+	public boolean cmdPenis()
+	{
+		int size = plugin.getConfig().getInt("penis.default_size", R.getInt("penis.default_size"));
+		if(countCmdArgs() >= 1) 
+			size = Integer.parseInt(getArg(0));
+		player.sendMessage(msg.format("<pink/>Vous imaginez une bite de taille " + size));
+		Location ploc = player.getLocation();
+		int minX = ploc.getBlockX() - size;
+		int maxX = ploc.getBlockX() + size;
+		//int minZ = ploc.getBlockZ() - size;
+		//int maxZ = ploc.getBlockZ() + size;
+		int z = ploc.getBlockZ();
+		int minY = ploc.getBlockY() + 2;
+		int maxY = ploc.getBlockY() + 2 + 2 * size;
+		int air = Material.AIR.getId();
+		World world = ploc.getWorld();
+		boolean libre = true;
+		for (int x=minX ;x<=maxX;x++) {
+			for (int y=minY; y<=maxY; y++) {
+				if (world.getBlockTypeIdAt(x, y, z) != air) {
+					libre = false;
+				}
+			}
+		}
+		
+		if (!libre) {
+			player.sendMessage(msg.format("<pink/>Vous n'avez pas la place de dessiner une bite ici"));
+		}
+		else {
+			player.sendMessage(msg.format("<pink/>Super Bite !"));
+			for (int x=minX ;x<=maxX;x++) {
+				for (int y=minY; y<=maxY; y++) {
+					Location biteloc = new Location(world, x, y, z);
+					world.getBlockAt(biteloc).setType(Material.DIRT);
+				}
+			}
+		}
+		return true;
+	}
+	
 	public boolean cmdSanitizeHell() 
 	{
-		int range = plugin.getConfig().getInt("sanitizehell.default_range", 15);
+		int range = plugin.getConfig().getInt("sanitizehell.default_range", R.getInt("sanitizehell.default_range"));
 		if(countCmdArgs() >= 1) 
 			range = Integer.parseInt(getArg(0));
 		
@@ -208,6 +252,7 @@ public class KcCommand implements CommandExecutor {
 					{"sanitizehell", "sh"},
 					{"greenwhooler", "gw", "gwr"},
 					{"getwhool", "wool"}, 
+					{"penis", "bite"},
 					{"help", "h", "/h", "/?", "?", "-h", "--help"},
 					{"listalias", "aliases"}
 			};
@@ -216,6 +261,7 @@ public class KcCommand implements CommandExecutor {
 			 if(isCommandOrAlias(mainCmd, "sanitizehell"))	return cmdSanitizeHell();
 		else if(isCommandOrAlias(mainCmd, "greenwhooler"))	return cmdGreenWhooler();
 		else if(isCommandOrAlias(mainCmd, "getwhool")) 		return cmdGetwhool();
+		else if(isCommandOrAlias(mainCmd, "penis")) 		return cmdPenis();
 		else if(isCommandOrAlias(mainCmd, "help"))			return cmdHelp();
 		else if(isCommandOrAlias(mainCmd, "listalias"))		return cmdListAliases();
 		else 												return cmdUnknownCmd();

@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.util.config.Configuration;
 
 /**
  * Handle events for all Player related events
@@ -28,8 +27,8 @@ public class KnoocraftPlayerListener extends PlayerListener {
     public void onPlayerMove(PlayerMoveEvent event) {
     	if(KnoocraftPlayerListener.greenwhooling) {
             
-    		firstColor  = plugin.getConfig().getInt("greenwhooler.firstColor", 13);
-            secondColor = plugin.getConfig().getInt("greenwhooler.secondColor", 5);
+    		firstColor  = plugin.getConfig().getInt("greenwhooler.firstColor", R.getInt("greenwhooler.firstColor"));
+            secondColor = plugin.getConfig().getInt("greenwhooler.secondColor", R.getInt("greenwhooler.secondColor"));
             
     		Location playerFrom = event.getFrom().clone();
     		Location playerTo = event.getTo();
