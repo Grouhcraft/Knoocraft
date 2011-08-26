@@ -62,7 +62,7 @@ public class KcCommand implements CommandExecutor {
 	}
 
 	/**
-	 * Retourne un sous-paramètre de la commande. Exemple pour <i>/kc getwhool
+	 * Retourne un sous-paramètre de la commande. Exemple pour <i>/kc getwool
 	 * white 64</i> getArg(1) donnera <i>white</i>, et getArg(2) <i>64</i>
 	 * 
 	 * @param num
@@ -86,7 +86,7 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return vrai si Ok.
 	 */
-	private boolean cmdGetwhool() {
+	private boolean cmdGetwool() {
 		HashMap<String, Short> colors = new HashMap<String, Short>();
 		colors.put("white", (short) 0);
 		colors.put("orange", (short) 1);
@@ -106,23 +106,23 @@ public class KcCommand implements CommandExecutor {
 		colors.put("black", (short) 15);
 
 		if (getArg(0).equalsIgnoreCase("list")) {
-			say("====== colors: ======");
-			say(" *<white/> white ");
-			say(" *<gold/> orange ");
-			say(" *<red/> magenta ");
-			say(" *<blue/> lightblue ");
-			say(" *<yellow/> yellow ");
-			say(" *<brightgreen/> lightgreen ");
-			say(" *<pink/> pink ");
-			say(" *<gray/> gray ");
-			say(" *<gray/> lightgray ");
-			say(" *<teal/> cyan ");
-			say(" *<purple/> purple ");
-			say(" *<darkblue/> blue ");
-			say(" *<red/> brown ");
-			say(" *<darkgreen/> darkgreen ");
-			say(" *<darkred/> red ");
-			say(" *<black/> black ");
+			say(R.get("getwool.list.title"));
+			say(R.get("getwool.list.white"));
+			say(R.get("getwool.list.orange"));
+			say(R.get("getwool.list.magenta"));
+			say(R.get("getwool.list.lightblue"));
+			say(R.get("getwool.list.yellow"));
+			say(R.get("getwool.list.lightgreen"));
+			say(R.get("getwool.list.pink"));
+			say(R.get("getwool.list.gray"));
+			say(R.get("getwool.list.lightgray"));
+			say(R.get("getwool.list.cyan"));
+			say(R.get("getwool.list.purple"));
+			say(R.get("getwool.list.blue"));
+			say(R.get("getwool.list.brown"));
+			say(R.get("getwool.list.darkgreen"));
+			say(R.get("getwool.list.red"));
+			say(R.get("getwool.list.black"));
 		} else {
 			int amount = 1;
 			String color = "";
@@ -141,12 +141,12 @@ public class KcCommand implements CommandExecutor {
 
 			if (colors.containsKey(color)) {
 				Inventory inventory = player.getInventory();
-				ItemStack coloredWhool = new ItemStack(Material.WOOL, amount,
+				ItemStack coloredWool = new ItemStack(Material.WOOL, amount,
 						colors.get(color.toLowerCase()));
-				inventory.addItem(coloredWhool);
+				inventory.addItem(coloredWool);
 			} else {
-				say("<red/> Couleur inconnue: " + color);
-				say("Tappez <gold/>\"/kc getwhool list\"<white/> pour une liste des couleurs possibles.");
+				say(R.get("getwool.unknown.title") + color);
+				say(R.get("getwool.unknown.details"));
 				return false;
 			}
 		}
@@ -167,13 +167,12 @@ public class KcCommand implements CommandExecutor {
 			size = Integer.parseInt(getArg(0));
 		int sizeMax = R.getInt("penis.max_size");
 		if (size > sizeMax) {
-			say("<pink/>"
-					+ size
-					+ "??? Mais quelle idée de vouloir faire une bite aussi grosse !!! Elle ne fera que "
-					+ sizeMax + ", et c'est déjà pas mal.");
+			say(R.get("penis.msg.too_big.1") + size
+					+ R.get("penis.msg.too_big.2") + sizeMax
+					+ R.get("penis.msg.too_big.3"));
 			size = sizeMax;
 		}
-		say("<pink/>Bite de taille " + size);
+		say(R.get("penis.msg.size") + size);
 
 		Location ploc = player.getLocation();
 		World world = ploc.getWorld();
@@ -202,7 +201,7 @@ public class KcCommand implements CommandExecutor {
 				int ray = 3 * (size / 2) - 1;
 				minZ = ploc.getBlockZ() - ray;
 				maxZ = ploc.getBlockZ() + ray + 1;
-			}	
+			}
 			// Autres points de repère horizontaux
 			int cou1Z = minZ + size - 1;
 			int cou2Z = maxZ - size + 1;
@@ -234,7 +233,7 @@ public class KcCommand implements CommandExecutor {
 				}
 			}
 			if (!libre) {
-				say("<pink/>Il n'y a pas la place suffisante pour un tel engin ici. Veuillez remonter votre braguette.");
+				say(R.get("penis.msg.no_space"));
 			} else {
 				// On construit la bite
 				for (int y = minY; y <= maxcouY; y++) {
@@ -299,7 +298,7 @@ public class KcCommand implements CommandExecutor {
 				}
 			}
 			if (!libre) {
-				say("<pink/>Il n'y a pas la place suffisante pour un tel engin ici. Veuillez remonter votre braguette.");
+				say(R.get("penis.msg.no_space"));
 			} else {
 				// On construit la bite
 				for (int y = minY; y <= maxcouY; y++) {
@@ -337,8 +336,8 @@ public class KcCommand implements CommandExecutor {
 		if (countCmdArgs() >= 1)
 			range = Integer.parseInt(getArg(0));
 
-		say("<gray/>[ === <gold/>KnooCraft <gray/>==== ]");
-		say("<pink/>Sanitize fire of Hell in a range of " + range);
+		say(R.get("sanitizehell.msg.title"));
+		say(R.get("sanitizehell.msg.range") + range);
 		Location ploc = player.getLocation();
 		World world = ploc.getWorld();
 		int minX = ploc.getBlockX() - range;
@@ -367,11 +366,10 @@ public class KcCommand implements CommandExecutor {
 				}
 			}
 		}
-		say("<pink/>"
-				+ count_changes
-				+ " <gold/>"
+		say(R.get("sanitizehell.msg.success.1") + count_changes
+				+ R.get("sanitizehell.msg.success.2")
 				+ replacedType.name().toLowerCase()
-				+ " have been fucked out and now illuminate world peacefully with "
+				+ R.get("sanitizehell.msg.success.3")
 				+ replaceByType.name().toLowerCase() + " !");
 		return true;
 	}
@@ -380,20 +378,20 @@ public class KcCommand implements CommandExecutor {
 	 * Commande d'aide. Liste donc les commandes dispo, et l'aide.
 	 */
 	public boolean cmdHelp() {
-		say("<gray/>[ === <gold/>KnooCraft <gray/>==== ]");
+		say(R.get("help.title"));
 		if (countCmdArgs() == 0) {
-			say("<gray/>Commandes:");
-			say("<gold/>/kc help :<gray/> Affiche cet ecran d'aide.");
-			say("<gold/>/kc help <commande> :<gray/> Afficher l'aide de la commande");
-			say("<gold/>/kc greenwhooler <on/off> :<gray/> Tapissage de sol de Nether");
-			say("<gold/>/kc sanitizehell [range] :<gray/> Assainissement de l'enfer.");
-			say("<gold/>/kc getwhool <color> <qty> :<gray/> Optention de laine coloree.");
-			say("<gold/>/kc listalias :<gray/> Liste les alias des commandes.");
-			say("<gold/>/kc give <item> [qtt] [\"inchest\"] :<gray/> donne objet.");
-			say("<gold/>/kc eyetp :<gray/> tp sur curseur.");
-			say("<gold/>/kc penis [taille] :<gray/> bitize.");
+			say(R.get("help.cmd.title"));
+			say(R.get("help.cmd.help"));
+			say(R.get("help.cmd.help_cmd"));
+			say(R.get("help.cmd.greenwooler"));
+			say(R.get("help.cmd.sanitizehell"));
+			say(R.get("help.cmd.getwool"));
+			say(R.get("help.cmd.listalias"));
+			say(R.get("help.cmd.give"));
+			say(R.get("help.cmd.eyetp"));
+			say(R.get("help.cmd.penis"));
 		} else {
-			say("<gold/>aide des commandes en construction..");
+			say(R.get("help.cmd.unknown"));
 		}
 		return true;
 	}
@@ -404,9 +402,9 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	public boolean cmdUnknownCmd() {
-		say("<gray/>[ === <gold/>KnooCraft <gray/>==== ]");
-		say("<red/>commande knoocraft inconnue: <gray/>\"" + this.args[0]
-				+ "\"");
+		say(R.get("unknown_cmd.title"));
+		say(R.get("unknown_cmd.details.1") + this.args[0]
+				+ R.get("unknown_cmd.details.2"));
 		return true;
 	}
 
@@ -440,7 +438,7 @@ public class KcCommand implements CommandExecutor {
 		String mainCmd = split[0].toLowerCase();
 		if (aliases.isEmpty()) {
 			String[][] commands = { { "sanitizehell", "sh" },
-					{ "greenwhooler", "gw", "gwr" }, { "getwhool", "wool" },
+					{ "greenwooler", "gw", "gwr" }, { "getwool", "wool" },
 					{ "penis", "bite" },
 					{ "help", "h", "/h", "/?", "?", "-h", "--help" },
 					{ "listalias", "aliases" }, { "give", "g" },
@@ -449,10 +447,10 @@ public class KcCommand implements CommandExecutor {
 		}
 		if (isCommandOrAlias(mainCmd, "sanitizehell"))
 			return cmdSanitizeHell();
-		if (isCommandOrAlias(mainCmd, "greenwhooler"))
-			return cmdGreenWhooler();
-		if (isCommandOrAlias(mainCmd, "getwhool"))
-			return cmdGetwhool();
+		if (isCommandOrAlias(mainCmd, "greenwooler"))
+			return cmdGreenWooler();
+		if (isCommandOrAlias(mainCmd, "getwool"))
+			return cmdGetwool();
 		if (isCommandOrAlias(mainCmd, "penis"))
 			return cmdPenis();
 		if (isCommandOrAlias(mainCmd, "help"))
@@ -533,15 +531,15 @@ public class KcCommand implements CommandExecutor {
 	private boolean cmdOrientation() {
 		Orientation ori = dirEye();
 		if (ori == Orientation.NORTH) {
-			say("<gray/>Nord");
+			say(R.get("orientation.north"));
 		} else {
 			if (ori == Orientation.SOUTH) {
-				say("<gray/>Sud");
+				say(R.get("orientation.south"));
 			} else {
 				if (ori == Orientation.EAST) {
-					say("<gray/>Est");
+					say(R.get("orientation.east"));
 				} else {
-					say("<gray/>Ouest");
+					say(R.get("orientation.west"));
 				}
 			}
 		}
@@ -586,8 +584,8 @@ public class KcCommand implements CommandExecutor {
 
 			given = new ItemStack(material, qtt);
 
-			say(in_chest ? "Donne des objets dans un coffre.."
-					: "Donne des objets dans l'inventaire");
+			say(in_chest ? R.get("give.msg.chest") : R
+					.get("give.msg.inventory"));
 
 			if (in_chest) {
 				((Block) destination).setType(Material.CHEST);
@@ -597,7 +595,7 @@ public class KcCommand implements CommandExecutor {
 				((PlayerInventory) destination).addItem(given);
 
 		} else {
-			say("<red/>Usage: /kc give <objet|ID> [quantite]");
+			say(R.get("give.msg.unknown"));
 		}
 		return true;
 	}
@@ -619,7 +617,8 @@ public class KcCommand implements CommandExecutor {
 	private boolean cmdListAliases() {
 		Set<String> k = aliases.keySet();
 		for (String cmdName : k) {
-			say("<gold/>" + cmdName + ": <gray/>"
+			say(R.get("list_aliases.cmd.1") + cmdName
+					+ R.get("list_aliases.cmd.2")
 					+ aliases.get(cmdName).toString());
 		}
 		return true;
@@ -666,24 +665,24 @@ public class KcCommand implements CommandExecutor {
 	}
 
 	/**
-	 * Démare le tapissage !
+	 * Démarre le tapissage !
 	 * 
 	 * @return
 	 */
-	private boolean cmdGreenWhooler() {
+	private boolean cmdGreenWooler() {
 		if (countCmdArgs() >= 1) {
 			boolean OnOff = getArg(0).equalsIgnoreCase("on") ? true : false;
 			if (OnOff) {
-				KnoocraftPlayerListener.greenwhooling = true;
-				say("[ <pink/>Greenwhooling began ]");
+				KnoocraftPlayerListener.greenwooling = true;
+				say(R.get("greenwooler.msg.start"));
 			} else if (getArg(0).equalsIgnoreCase("off")) {
-				KnoocraftPlayerListener.greenwhooling = false;
-				say("[ <pink/>Greenwhooling stopped ]");
+				KnoocraftPlayerListener.greenwooling = false;
+				say(R.get("greenwooler.msg.stop"));
 			} else {
-				say("Usage: <gold/>/greenwhooler <on|off>");
+				say(R.get("greenwooler.msg.unknown"));
 			}
 		} else {
-			say("Usage: <gold/>/greenwhooler <on|off>");
+			say(R.get("greenwooler.msg.unknown"));
 			return false;
 		}
 		return true;

@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
  */
 public class KnoocraftPlayerListener extends PlayerListener {
 	private final knoocraft plugin;
-	public static boolean greenwhooling = false;
+	public static boolean greenwooling = false;
 	public static int moins_Y = 1;
 
 	private int firstColor;
@@ -27,14 +27,14 @@ public class KnoocraftPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerMove(PlayerMoveEvent event) {
 		/* ------------------------------------------------------ */
-		// Greenwhooler
+		// Greenwooler
 		/* ------------------------------------------------------ */
-		if (KnoocraftPlayerListener.greenwhooling) {
+		if (KnoocraftPlayerListener.greenwooling) {
 
-			firstColor = plugin.getConfig().getInt("greenwhooler.firstColor",
-					R.getInt("greenwhooler.firstColor"));
-			secondColor = plugin.getConfig().getInt("greenwhooler.secondColor",
-					R.getInt("greenwhooler.secondColor"));
+			firstColor = plugin.getConfig().getInt("greenwooler.firstColor",
+					R.getInt("greenwooler.firstColor"));
+			secondColor = plugin.getConfig().getInt("greenwooler.secondColor",
+					R.getInt("greenwooler.secondColor"));
 
 			Location playerFrom = event.getFrom().clone();
 			Location playerTo = event.getTo();
@@ -44,14 +44,14 @@ public class KnoocraftPlayerListener extends PlayerListener {
 			if (underlaying_block == Material.NETHERRACK.getId()
 					|| underlaying_block == Material.SOUL_SAND.getId()) {
 				double r = Math.random();
-				byte whool_color = 0;
+				byte wool_color = 0;
 				if (r < 0.33)
-					whool_color = (byte) firstColor;
+					wool_color = (byte) firstColor;
 				else
-					whool_color = (byte) secondColor;
+					wool_color = (byte) secondColor;
 
 				playerFrom.getBlock().setTypeIdAndData(Material.WOOL.getId(),
-						(byte) whool_color, true);
+						(byte) wool_color, true);
 			}
 		}
 	}

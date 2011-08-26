@@ -57,8 +57,8 @@ public class knoocraft extends JavaPlugin {
 	}
 
 	private void createDefaultConfig() {
-		getConfig().setProperty("greenwhooler.firstColor", R.getInt("greenwhooler.firstColor"));
-        getConfig().setProperty("greenwhooler.secondColor", R.getInt("greenwhooler.secondColor"));
+		getConfig().setProperty("greenwooler.firstColor", R.getInt("greenwooler.firstColor"));
+        getConfig().setProperty("greenwooler.secondColor", R.getInt("greenwooler.secondColor"));
         getConfig().setProperty("sanitizehell.default_range", R.getInt("sanitizehell.default_range"));
         getConfig().setProperty("sanitizehell.replacedType", Material.FIRE.name().toLowerCase());
         getConfig().setProperty("sanitizehell.replaceByType", Material.GLOWSTONE.name().toLowerCase());
