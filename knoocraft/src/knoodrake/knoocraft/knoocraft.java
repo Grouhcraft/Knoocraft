@@ -63,6 +63,8 @@ public class knoocraft extends JavaPlugin {
         getConfig().setProperty("sanitizehell.replacedType", Material.FIRE.name().toLowerCase());
         getConfig().setProperty("sanitizehell.replaceByType", Material.GLOWSTONE.name().toLowerCase());
         getConfig().setProperty("penis.default_size", R.getInt("penis.default_size"));
+        getConfig().setProperty("penis.max_size", R.getInt("penis.max_size"));
+        getConfig().setProperty("penis.dist_user", R.getInt("penis.dist_user"));
         getConfig().save();
 	}
 
