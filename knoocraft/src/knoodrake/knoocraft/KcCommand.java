@@ -19,8 +19,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
-
 import knoodrake.knoocraft.KcMessaging;
 
 public class KcCommand implements CommandExecutor {
@@ -30,7 +28,8 @@ public class KcCommand implements CommandExecutor {
 	private Player player = null;
 	private CommandSender sender = null;
 	private HashMap<String, ArrayList<String>> aliases = new HashMap<String, ArrayList<String>>();
-//toto
+
+	// toto
 	public KcCommand(knoocraft plugin) {
 		this.plugin = plugin;
 	}
@@ -39,8 +38,8 @@ public class KcCommand implements CommandExecutor {
 	private boolean checkPerm(String node) {
 		boolean x = (knoocraft.permissionHandler.has(player, node));
 		if (!x)
-			knoocraft.log.log(Level.WARNING,
-					msg.format("<red/> checkPerm: fails"));
+			knoocraft.log.log(Level.WARNING, msg
+					.format("<red/> checkPerm: fails"));
 		return x;
 	}
 
@@ -48,8 +47,8 @@ public class KcCommand implements CommandExecutor {
 	private boolean checkIsPlayer() {
 		boolean x = sender.getClass().getName().equals("Player");
 		if (!x)
-			knoocraft.log.log(Level.WARNING,
-					msg.format("<red/> checkIsPlayer: fails"));
+			knoocraft.log.log(Level.WARNING, msg
+					.format("<red/> checkIsPlayer: fails"));
 		return x;
 	}
 
@@ -57,8 +56,8 @@ public class KcCommand implements CommandExecutor {
 	private boolean checkOp() {
 		boolean x = player.isOp();
 		if (!x)
-			knoocraft.log.log(Level.WARNING,
-					msg.format("<red/> checkOp: fails"));
+			knoocraft.log.log(Level.WARNING, msg
+					.format("<red/> checkOp: fails"));
 		return x;
 	}
 
@@ -81,7 +80,7 @@ public class KcCommand implements CommandExecutor {
 	}
 
 	/**
-	 * Donne des blocs de laine dans la couleur et la quantité souhaité.
+	 * Donne des blocs de laine dans la couleur et la quantité souhaitée.
 	 * Remarque: les blocs arrivent directement dans l'inventaire. Excpetion non
 	 * gérée si plus de place..
 	 * 
@@ -154,91 +153,176 @@ public class KcCommand implements CommandExecutor {
 		return true;
 	}
 
+	/**
+	 * Dessine une bite de la taille souhaitée
+	 * 
+	 * @return vrai si Ok
+	 */
 	public boolean cmdPenis() {
-		int size = plugin.getConfig().getInt("penis.default_size", 3);
+
+		// size correspond au diamètre d'une couille (carrée, la couille)
+		int size = plugin.getConfig().getInt("penis.default_size",
+				R.getInt("penis.default_size"));
 		if (countCmdArgs() >= 1)
 			size = Integer.parseInt(getArg(0));
-		if (size > 30) {
+		int sizeMax = R.getInt("penis.max_size");
+		if (size > sizeMax) {
 			say("<pink/>"
 					+ size
-					+ "??? Mais quelle idée de vouloir faire une bite aussi grosse !!! Elle ne fera que 30, et c'est déjà pas mal.");
-			size = 30;
+					+ "??? Mais quelle idée de vouloir faire une bite aussi grosse !!! Elle ne fera que "
+					+ sizeMax + ", et c'est déjà pas mal.");
+			size = sizeMax;
 		}
 		say("<pink/>Bite de taille " + size);
+
 		Location ploc = player.getLocation();
 		World world = ploc.getWorld();
 		int air = Material.AIR.getId();
 
-		int ray;
-		if (size % 2 == 1) {
-			ray = (3 * size - 1) / 2;
-		} else {
-			ray = 3 * (size / 2) - 1;
-		}
-
-		// Min et max horizontal 1ere coordonnée
-		int minX = ploc.getBlockX() - ray;
-		int maxX = ploc.getBlockX() + ray;
-		// 2nde coordonnée horizontale : constante car plat
-		int z = ploc.getBlockZ();
 		// Min et max vertical
 		int minY = ploc.getBlockY() + 2;
 		int maxY = ploc.getBlockY() + 4 * size + 1;
 
-		// Autres points de repere horizontaux
-		int cou1X = minX + size - 1;
-		int cou2X = maxX - size + 1;
-
-		// Autres points de repere verticaux
+		// Autres points de repère verticaux
 		int maxcouY = minY + size - 1;
 		int minglaY = maxcouY + 2 * size + 1;
 
 		boolean libre = true;
 
-		for (int y = minY; y <= maxcouY; y++) {
-			for (int x = minX; x <= cou1X; x++) {
-				if (world.getBlockTypeIdAt(x, y, z) != air) {
-					libre = false;
+		// Orientation du regard du joueur
+		Orientation ori = dirEye();
+		if (ori == Orientation.NORTH || ori == Orientation.SOUTH) {
+			// Les couilles s'étendent d'est en ouest face au joueur
+			int minZ, maxZ;
+			if (size % 2 == 1) {
+				int ray = (3 * size - 1) / 2;
+				minZ = ploc.getBlockZ() - ray;
+				maxZ = ploc.getBlockZ() + ray;
+			} else {
+				int ray = 3 * (size / 2) - 1;
+				minZ = ploc.getBlockZ() - ray;
+				maxZ = ploc.getBlockZ() + ray + 1;
+			}	
+			// Autres points de repère horizontaux
+			int cou1Z = minZ + size - 1;
+			int cou2Z = maxZ - size + 1;
+			// x est constant
+			int xCst;
+			if (ori == Orientation.NORTH) {
+				xCst = ploc.getBlockX() - 1 - R.getInt("penis.dist_user");
+			} else {
+				xCst = ploc.getBlockX() + 1 + R.getInt("penis.dist_user");
+			}
+			// On teste si la place est libre
+			for (int y = minY; y <= maxcouY; y++) {
+				for (int z = minZ; z <= cou1Z; z++) {
+					if (world.getBlockTypeIdAt(xCst, y, z) != air) {
+						libre = false;
+					}
+				}
+				for (int z = cou2Z; z <= maxZ; z++) {
+					if (world.getBlockTypeIdAt(xCst, y, z) != air) {
+						libre = false;
+					}
 				}
 			}
-			for (int x = cou2X; x <= maxY; x++) {
-				if (world.getBlockTypeIdAt(x, y, z) != air) {
-					libre = false;
+			for (int y = maxcouY + 1; y <= maxY; y++) {
+				for (int z = cou1Z + 1; z < cou2Z; z++) {
+					if (world.getBlockTypeIdAt(xCst, y, z) != air) {
+						libre = false;
+					}
 				}
 			}
-		}
-		for (int y = maxcouY + 1; y <= maxY; y++) {
-			for (int x = cou1X + 1; x < cou2X; x++) {
-				if (world.getBlockTypeIdAt(x, y, z) != air) {
-					libre = false;
+			if (!libre) {
+				say("<pink/>Il n'y a pas la place suffisante pour un tel engin ici. Veuillez remonter votre braguette.");
+			} else {
+				// On construit la bite
+				for (int y = minY; y <= maxcouY; y++) {
+					for (int z = minZ; z <= cou1Z; z++) {
+						world.getBlockAt(xCst, y, z).setType(Material.DIRT);
+					}
+					for (int z = cou2Z; z <= maxZ; z++) {
+						world.getBlockAt(xCst, y, z).setType(Material.DIRT);
+					}
+				}
+				for (int z = cou1Z + 1; z < cou2Z; z++) {
+					for (int y = maxcouY + 1; y < minglaY; y++) {
+						world.getBlockAt(xCst, y, z).setType(Material.WOOL);
+						world.getBlockAt(xCst, y, z).setData((byte) 6);
+					}
+					for (int y = minglaY; y <= maxY; y++) {
+						world.getBlockAt(xCst, y, z).setType(
+								Material.NETHERRACK);
+					}
 				}
 			}
-		}
-
-		if (!libre) {
-			say("<pink/>Il n'y a pas la place suffisante pour un tel engin ici. Veuillez remonter votre braguette.");
 		} else {
+			// Les couilles s'étendent du nord au sud face au joueur
+			int minX, maxX;
+			if (size % 2 == 1) {
+				int ray = (3 * size - 1) / 2;
+				minX = ploc.getBlockX() - ray;
+				maxX = ploc.getBlockX() + ray;
+			} else {
+				int ray = 3 * (size / 2) - 1;
+				minX = ploc.getBlockX() - ray;
+				maxX = ploc.getBlockX() + ray + 1;
+			}
+			// Autres points de repère horizontaux
+			int cou1X = minX + size - 1;
+			int cou2X = maxX - size + 1;
+			// z est constant
+			int zCst;
+			if (ori == Orientation.EAST) {
+				zCst = ploc.getBlockZ() - 1 - R.getInt("penis.dist_user");
+			} else {
+				zCst = ploc.getBlockZ() + 1 + R.getInt("penis.dist_user");
+			}
+			// On teste si la place est libre
 			for (int y = minY; y <= maxcouY; y++) {
 				for (int x = minX; x <= cou1X; x++) {
-					world.getBlockAt(x, y, z).setType(Material.DIRT);
+					if (world.getBlockTypeIdAt(x, y, zCst) != air) {
+						libre = false;
+					}
 				}
 				for (int x = cou2X; x <= maxX; x++) {
-					world.getBlockAt(x, y, z).setType(Material.DIRT);
+					if (world.getBlockTypeIdAt(x, y, zCst) != air) {
+						libre = false;
+					}
 				}
 			}
-			for (int x = cou1X + 1; x < cou2X; x++) {
-				for (int y = maxcouY + 1; y < minglaY; y++) {
-					world.getBlockAt(x, y, z).setType(Material.WOOL);
-					world.getBlockAt(x, y, z).setData((byte) 6);
+			for (int y = maxcouY + 1; y <= maxY; y++) {
+				for (int x = cou1X + 1; x < cou2X; x++) {
+					if (world.getBlockTypeIdAt(x, y, zCst) != air) {
+						libre = false;
+					}
 				}
-				for (int y = minglaY; y <= maxY; y++) {
-					world.getBlockAt(x, y, z).setType(Material.NETHERRACK);
+			}
+			if (!libre) {
+				say("<pink/>Il n'y a pas la place suffisante pour un tel engin ici. Veuillez remonter votre braguette.");
+			} else {
+				// On construit la bite
+				for (int y = minY; y <= maxcouY; y++) {
+					for (int x = minX; x <= cou1X; x++) {
+						world.getBlockAt(x, y, zCst).setType(Material.DIRT);
+					}
+					for (int x = cou2X; x <= maxX; x++) {
+						world.getBlockAt(x, y, zCst).setType(Material.DIRT);
+					}
+				}
+				for (int x = cou1X + 1; x < cou2X; x++) {
+					for (int y = maxcouY + 1; y < minglaY; y++) {
+						world.getBlockAt(x, y, zCst).setType(Material.WOOL);
+						world.getBlockAt(x, y, zCst).setData((byte) 6);
+					}
+					for (int y = minglaY; y <= maxY; y++) {
+						world.getBlockAt(x, y, zCst).setType(
+								Material.NETHERRACK);
+					}
 				}
 			}
 		}
-
 		return true;
-
 	}
 
 	/**
@@ -248,7 +332,8 @@ public class KcCommand implements CommandExecutor {
 	 * @return un booléen
 	 */
 	public boolean cmdSanitizeHell() {
-		int range = plugin.getConfig().getInt("sanitizehell.default_range", 15);
+		int range = plugin.getConfig().getInt("sanitizehell.default_range",
+				R.getInt("sanitizehell.default_range"));
 		if (countCmdArgs() >= 1)
 			range = Integer.parseInt(getArg(0));
 
@@ -266,8 +351,7 @@ public class KcCommand implements CommandExecutor {
 		Material replacedType = Material.getMaterial(plugin.getConfig()
 				.getString("sanitizehell.replacedType", Material.FIRE.name())
 				.toUpperCase());
-		Material replaceByType = Material.getMaterial(plugin
-				.getConfig()
+		Material replaceByType = Material.getMaterial(plugin.getConfig()
 				.getString("sanitizehell.replaceByType",
 						Material.GLOWSTONE.name()).toUpperCase());
 
@@ -353,31 +437,36 @@ public class KcCommand implements CommandExecutor {
 		if (split.length < 1)
 			return false;
 
-		//grouhnette qui pouette
 		String mainCmd = split[0].toLowerCase();
 		if (aliases.isEmpty()) {
-			String[][] commands = { 
-					{ "sanitizehell", "sh" },
-					{ "greenwhooler", "gw", "gwr" }, 
-					{ "getwhool", "wool" },
+			String[][] commands = { { "sanitizehell", "sh" },
+					{ "greenwhooler", "gw", "gwr" }, { "getwhool", "wool" },
 					{ "penis", "bite" },
 					{ "help", "h", "/h", "/?", "?", "-h", "--help" },
-					{ "listalias", "aliases" }, 
-					{ "give", "g" },
-					{ "eyetp", "etp" },
-					{ "orient", "orientation", "compass" },
-			}; addCommands(commands);
+					{ "listalias", "aliases" }, { "give", "g" },
+					{ "eyetp", "etp" }, { "orient", "orientation", "compass" }, };
+			addCommands(commands);
 		}
-		if (isCommandOrAlias(mainCmd, "sanitizehell"))	return cmdSanitizeHell();
-		if (isCommandOrAlias(mainCmd, "greenwhooler"))	return cmdGreenWhooler();
-		if (isCommandOrAlias(mainCmd, "getwhool"))		return cmdGetwhool();
-		if (isCommandOrAlias(mainCmd, "penis"))			return cmdPenis();
-		if (isCommandOrAlias(mainCmd, "help"))			return cmdHelp();
-		if (isCommandOrAlias(mainCmd, "listalias"))		return cmdListAliases();
-		if (isCommandOrAlias(mainCmd, "give"))			return cmdGive();
-		if (isCommandOrAlias(mainCmd, "eyetp"))			return cmdEyeTp();
-		if (isCommandOrAlias(mainCmd, "orient"))		return cmdOrientation();
-		else											return cmdUnknownCmd();
+		if (isCommandOrAlias(mainCmd, "sanitizehell"))
+			return cmdSanitizeHell();
+		if (isCommandOrAlias(mainCmd, "greenwhooler"))
+			return cmdGreenWhooler();
+		if (isCommandOrAlias(mainCmd, "getwhool"))
+			return cmdGetwhool();
+		if (isCommandOrAlias(mainCmd, "penis"))
+			return cmdPenis();
+		if (isCommandOrAlias(mainCmd, "help"))
+			return cmdHelp();
+		if (isCommandOrAlias(mainCmd, "listalias"))
+			return cmdListAliases();
+		if (isCommandOrAlias(mainCmd, "give"))
+			return cmdGive();
+		if (isCommandOrAlias(mainCmd, "eyetp"))
+			return cmdEyeTp();
+		if (isCommandOrAlias(mainCmd, "orient"))
+			return cmdOrientation();
+		else
+			return cmdUnknownCmd();
 	}
 
 	/**
@@ -391,17 +480,18 @@ public class KcCommand implements CommandExecutor {
 		player.teleport(loc);
 		return true;
 	}
-	
+
 	/**
 	 * Les 4 points cardinaux
 	 */
 	private enum Orientation {
-	    NORTH, // -1, 0, 0
+		NORTH, // -1, 0, 0
 		SOUTH, // 1, 0, 0
-	    EAST, // 0, 0, -1
-	    WEST // 0 , 0, 1
+		EAST, // 0, 0, -1
+		WEST
+		// 0 , 0, 1
 	}
-	
+
 	/**
 	 * Renvoie le point cardinal vers lequel est orienté le regard du joueur
 	 * 
@@ -412,31 +502,31 @@ public class KcCommand implements CommandExecutor {
 		Vector dir = eyeloc.getDirection();
 		double dirx = dir.getX();
 		double dirz = dir.getZ();
-		if (dirz==dirx) {
-			if (dirx>=0) {
+		if (dirz == dirx) {
+			if (dirx >= 0) {
 				return Orientation.SOUTH;
 			}
 			return Orientation.NORTH;
 		}
-		if (dirz==-dirx) {
-			if (dirz>0) {
+		if (dirz == -dirx) {
+			if (dirz > 0) {
 				return Orientation.WEST;
 			}
 			return Orientation.EAST;
 		}
-		if (dirz<dirx) {
-			if (dirz>-dirx) {
+		if (dirz < dirx) {
+			if (dirz > -dirx) {
 				return Orientation.SOUTH;
 			}
 			return Orientation.EAST;
 		}
 		// dirz > dirx
-		if (dirz>-dirx) {
+		if (dirz > -dirx) {
 			return Orientation.WEST;
 		}
 		return Orientation.NORTH;
 	}
-	
+
 	/**
 	 * Affiche le point cardinal vers lequel est orienté le regard du joueur
 	 */
@@ -444,16 +534,13 @@ public class KcCommand implements CommandExecutor {
 		Orientation ori = dirEye();
 		if (ori == Orientation.NORTH) {
 			say("<gray/>Nord");
-		}
-		else {
+		} else {
 			if (ori == Orientation.SOUTH) {
 				say("<gray/>Sud");
-			}
-			else {
+			} else {
 				if (ori == Orientation.EAST) {
 					say("<gray/>Est");
-				}
-				else  {
+				} else {
 					say("<gray/>Ouest");
 				}
 			}
