@@ -61,12 +61,12 @@ public class knoocraft extends JavaPlugin {
 	protected boolean isUpdateAvailable() {
 		// Try to auto update, inspired from Narrowtux GPL's code
 		// https://github.com/narrowtux/NarrowtuxLib/blob/master/src/com/narrowtux/Main/NarrowtuxLib.java
-		if(getConfig().getBoolean("autoupdate.enabled", false)) 
+		if(getConfig().getBoolean("autoupdate.enabled", false))
 		{
 			log.info( "[KnooCraft] Looking for updates..");
 			log.info( "[KnooCraft] Current version: " + getVersion());
 			try {
-				URL url = new URL(getConfig().getString("autoupdate.check_url"));
+				URL url = new URL(getConfig().getString("autoupdate.check_url", ""));
 				BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 				String str;
 				while ((str = in.readLine()) != null) {
@@ -140,6 +140,9 @@ public class knoocraft extends JavaPlugin {
     			this.config = new Configuration(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml"));
     			if(newfile)
     				createDefaultConfig();
+    			else {
+    				this.config.load();
+    			}
     		}
     	}
     }
