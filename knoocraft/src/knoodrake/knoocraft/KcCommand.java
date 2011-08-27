@@ -1,5 +1,6 @@
 package knoodrake.knoocraft;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -86,7 +87,8 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return vrai si Ok.
 	 */
-	private boolean cmdGetwool() {
+	@SuppressWarnings("unused")
+	private boolean cmd_getwool() {
 		HashMap<String, Short> colors = new HashMap<String, Short>();
 		colors.put("white", (short) 0);
 		colors.put("orange", (short) 1);
@@ -135,7 +137,7 @@ public class KcCommand implements CommandExecutor {
 					color = getArg(0);
 				} catch (NumberFormatException e2) {
 					args = new String[] {};
-					return cmdHelp();
+					return cmd_help();
 				}
 			}
 
@@ -158,7 +160,7 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return vrai si Ok
 	 */
-	public boolean cmdPenis() {
+	public boolean cmd_penis() {
 
 		// size correspond au diamètre d'une couille (carrée, la couille)
 		int size = plugin.getConfig().getInt("penis.default_size",
@@ -186,7 +188,7 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return un booléen
 	 */
-	public boolean cmdSanitizeHell() {
+	public boolean cmd_sanitizehell() {
 		int range = plugin.getConfig().getInt("sanitizehell.default_range",
 				R.getInt("sanitizehell.default_range"));
 		if (countCmdArgs() >= 1)
@@ -233,7 +235,7 @@ public class KcCommand implements CommandExecutor {
 	/**
 	 * Commande d'aide. Liste donc les commandes dispo, et l'aide.
 	 */
-	public boolean cmdHelp() {
+	public boolean cmd_help() {
 		say(R.get("help.title"));
 		if (countCmdArgs() == 0) {
 			say(R.get("help.cmd.title"));
@@ -257,7 +259,7 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return
 	 */
-	public boolean cmdUnknownCmd() {
+	public boolean cmd_unknowncmd() {
 		say(R.get("unknown_cmd.title"));
 		say(R.get("unknown_cmd.details.1") + this.args[0]
 				+ R.get("unknown_cmd.details.2"));
@@ -283,6 +285,7 @@ public class KcCommand implements CommandExecutor {
 			String label, String[] split) {
 		this.args = split;
 		this.sender = sender;
+		//TODO faire marcher..
 		// if(!checkIsPlayer()) return false;
 		// if(!checkPerm("knoocraft.getwool")) return false;
 		// if(!checkOp()) return false;
@@ -293,34 +296,42 @@ public class KcCommand implements CommandExecutor {
 
 		String mainCmd = split[0].toLowerCase();
 		if (aliases.isEmpty()) {
-			String[][] commands = { { "sanitizehell", "sh" },
-					{ "greenwooler", "gw", "gwr" }, { "getwool", "wool" },
+			this.addCommands(new String[][]{
+					/*
+					 * Ajouter les commandes suivi des alias ici
+					 */
+					{ "sanitizehell", "sh" },
+					{ "greenwooler", "gw", "gwr" }, 
+					{ "getwool", "wool" },
 					{ "penis", "bite" },
 					{ "help", "h", "/h", "/?", "?", "-h", "--help" },
-					{ "listalias", "aliases" }, { "give", "g" },
-					{ "eyetp", "etp" }, { "orient", "orientation", "compass" }, };
-			addCommands(commands);
+					{ "listalias", "aliases" }, 
+					{ "give", "g" },
+					{ "eyetp", "etp" }, 
+					{ "orient", "orientation", "compass" }
+				});
 		}
-		if (isCommandOrAlias(mainCmd, "sanitizehell"))
-			return cmdSanitizeHell();
-		if (isCommandOrAlias(mainCmd, "greenwooler"))
-			return cmdGreenWooler();
-		if (isCommandOrAlias(mainCmd, "getwool"))
-			return cmdGetwool();
-		if (isCommandOrAlias(mainCmd, "penis"))
-			return cmdPenis();
-		if (isCommandOrAlias(mainCmd, "help"))
-			return cmdHelp();
-		if (isCommandOrAlias(mainCmd, "listalias"))
-			return cmdListAliases();
-		if (isCommandOrAlias(mainCmd, "give"))
-			return cmdGive();
-		if (isCommandOrAlias(mainCmd, "eyetp"))
-			return cmdEyeTp();
-		if (isCommandOrAlias(mainCmd, "orient"))
-			return cmdOrientation();
-		else
-			return cmdUnknownCmd();
+		
+		//on tente de trouver la méthode correspondant à 
+		//la commande ou l'alias tappé (mainCmd).
+		//TODO S'occuper de ces exceptions là..
+		for (String cmdName : aliases.keySet()) {
+			if(isCommandOrAlias(mainCmd, cmdName)) {
+				java.lang.reflect.Method method;
+				try {
+				  method = this.getClass().getMethod("cmd_" + cmdName);
+				  return (Boolean) method.invoke(this);
+				} 
+				catch (SecurityException e) {} 
+				catch (NoSuchMethodException e) {
+					return cmd_unknowncmd();
+				}
+				catch (IllegalArgumentException e) {}
+				catch (IllegalAccessException e) {}
+				catch (InvocationTargetException e) {}
+			}
+		}
+		return cmd_unknowncmd();
 	}
 
 	/**
@@ -328,7 +339,8 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return
 	 */
-	private boolean cmdEyeTp() {
+	@SuppressWarnings("unused")
+	private boolean cmd_eyetp() {
 		Location loc = player.getTargetBlock(null, 1024).getLocation();
 		loc.setY(loc.getBlockY() + 1);
 		player.teleport(loc);
@@ -338,7 +350,8 @@ public class KcCommand implements CommandExecutor {
 	/**
 	 * Affiche le point cardinal vers lequel est orienté le regard du joueur
 	 */
-	private boolean cmdOrientation() {
+	@SuppressWarnings("unused")
+	private boolean cmd_orientation() {
 		Orientation orientation = new Orientation(player);
 		CardinalPoints cardinalPoint = orientation.dirEye();
 		if (cardinalPoint == Orientation.CardinalPoints.NORTH) {
@@ -361,10 +374,11 @@ public class KcCommand implements CommandExecutor {
 	/**
 	 * donne des objets (remplace la commande /give par défaut) On peu donner
 	 * l'ID ou le nom du matériau. Usage: /kc give cobblestone 900 inchest
-	 * 
+	 * De plus, la qtt est facultative. on peu donc tapper: /kc g wood pour avoir 1 bloc de bois
 	 * @return
 	 */
-	private boolean cmdGive() {
+	@SuppressWarnings("unused")
+	private boolean cmd_give() {
 		/* ---------------------------------------- */
 		/*
 		 * Traitement des params /* ----------------------------------------
@@ -426,7 +440,8 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return
 	 */
-	private boolean cmdListAliases() {
+	@SuppressWarnings("unused")
+	private boolean cmd_listaliases() {
 		Set<String> k = aliases.keySet();
 		for (String cmdName : k) {
 			say(R.get("list_aliases.cmd.1") + cmdName
@@ -448,14 +463,10 @@ public class KcCommand implements CommandExecutor {
 	 */
 	private void addCommands(String[][] commands) {
 		for (String[] cmd : commands) {
-			// plugin.log.log(Level.INFO,
-			// "[KNOOCRAFT] adding aliases for.. cmd[0]:" + cmd[0]);
 			if (!aliases.containsKey(cmd[0])) {
 				aliases.put(cmd[0], new ArrayList<String>());
 			}
 			for (String alias : cmd) {
-				// plugin.log.log(Level.INFO,
-				// "[KNOOCRAFT] trying to add alias..:" + alias);
 				ArrayList<String> c = aliases.get(cmd[0]);
 				c.add(alias);
 			}
@@ -481,7 +492,8 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return
 	 */
-	private boolean cmdGreenWooler() {
+	@SuppressWarnings("unused")
+	private boolean cmd_greenwooler() {
 		if (countCmdArgs() >= 1) {
 			boolean OnOff = getArg(0).equalsIgnoreCase("on") ? true : false;
 			if (OnOff) {
