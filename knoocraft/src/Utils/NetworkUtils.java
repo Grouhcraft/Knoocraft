@@ -8,7 +8,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.logging.Logger;
-
+/**
+ * @author Narrowtux
+ * {@link https://github.com/narrowtux/NarrowtuxLib/}<br/>
+ * Narrowtux GPL's code <br/>
+ * DON'T USE WITHOUT ACCEPTING THE GPL LICENSE, Viewable at the given url
+ */
 public class NetworkUtils {
 
 	/**
