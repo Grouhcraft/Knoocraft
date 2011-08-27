@@ -63,7 +63,8 @@ public class knoocraft extends JavaPlugin {
 		// https://github.com/narrowtux/NarrowtuxLib/blob/master/src/com/narrowtux/Main/NarrowtuxLib.java
 		if(getConfig().getBoolean("autoupdate.enabled", false)) 
 		{
-			log.info("Version: " + getVersion());
+			log.info( "[KnooCraft] Looking for updates..");
+			log.info( "[KnooCraft] Current version: " + getVersion());
 			try {
 				URL url = new URL(getConfig().getString("autoupdate.check_url"));
 				BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -74,13 +75,18 @@ public class knoocraft extends JavaPlugin {
 							+ Integer.parseInt(split[1]);
 					if (version > getVersion()) {
 						in.close();
+						log.info( "[KnooCraft] a new version is avaible and will be downloaded: " + String.valueOf(version));
 						return true;
 					}
 				}
 				in.close();
 			} catch (Exception e) {
+				log.info( "[KnooCraft] Error while trying to check new versions..:\"" + e.getMessage() +"\"");
 			}
 			return false;
+		}
+		else {
+			log.info( "[KnooCraft] automatic updates disabled.");
 		}
 		return false;
 	}
@@ -92,12 +98,15 @@ public class knoocraft extends JavaPlugin {
             return;
         }
         try {
+        	log.info( "[KnooCraft] downloading and installing new KnooCraft version");
             File directory = new File(Bukkit.getServer().getUpdateFolder());
             if (!directory.exists()) {
+            	log.info( "[KnooCraft] creating update directory \"" + directory.getName() + "\"");
                 directory.mkdir();
             }
             File plugin = new File(directory.getPath(), R.getString("jar_name"));
             if (!plugin.exists()) {
+            	log.info( "[KnooCraft] downloading from \""+ getConfig().getString("autoupdate.download_url") +"\"");
                 URL bukkitContrib = new URL(getConfig().getString("autoupdate.download_url"));
                 HttpURLConnection con = (HttpURLConnection)(bukkitContrib.openConnection());
                 System.setProperty("http.agent", ""); //Spoofing the user agent is required to track stats
@@ -107,12 +116,16 @@ public class knoocraft extends JavaPlugin {
                 fos.getChannel().transferFrom(rbc, 0, 1 << 24);
             }
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+        	log.info( "[KnooCraft] Error while auto-updating: \"" + e.getMessage() + "\"");
+        }
     }
 
     private int getVersion() {
-    	return R.getInt("version.major") * 10
-    			+ R.getInt("version.minor");
+    	String[] split = getDescription().getVersion().split("\\.");
+		int version = Integer.parseInt(split[0]) * 10
+				+ Integer.parseInt(split[1]);
+		return version;
 	}
 
 
