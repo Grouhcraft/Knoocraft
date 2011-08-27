@@ -29,6 +29,7 @@ public class KcCommand implements CommandExecutor {
 	private Player player = null;
 	private CommandSender sender = null;
 	private HashMap<String, ArrayList<String>> aliases = new HashMap<String, ArrayList<String>>();
+	private boolean SuperSpeeded = false; 
 
 	// toto
 	public KcCommand(knoocraft plugin) {
@@ -265,12 +266,19 @@ public class KcCommand implements CommandExecutor {
 				+ R.get("unknown_cmd.details.2"));
 		return true;
 	}
+	
+	public void cmd_superspeed()
+	{
+		SuperSpeeded = !SuperSpeeded;
+		if(SuperSpeeded)
+			player.setVelocity(player.getVelocity().multiply(3.0));
+	}
 
 	/**
 	 * kc est une commande qui recoit des <i>sous-commandes</i>, par exemple
 	 * pour <i>kc help</i> la commande pour bukkit est <i>kc</i>, mais pour
 	 * KnooCraft, c'est <i>help</i>. Cette fonction retourne le nombre de
-	 * parametre de la commande KnooCraft. Exemple: dans <i>kc help test
+	 * parametre de la commandSe KnooCraft. Exemple: dans <i>kc help test
 	 * test2</i>, il y à 3 params pour bukkit, mais cette fonction renverra 2
 	 * (test et test2) que sont les params de help.
 	 * 
@@ -308,7 +316,8 @@ public class KcCommand implements CommandExecutor {
 					{ "listalias", "aliases" }, 
 					{ "give", "g" },
 					{ "eyetp", "etp" }, 
-					{ "orient", "orientation", "compass" }
+					{ "orient", "orientation", "compass" },
+					{ "superspeed", "speed", "s"}
 				});
 		}
 		
