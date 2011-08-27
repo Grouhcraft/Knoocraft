@@ -173,6 +173,13 @@ public class knoocraft extends JavaPlugin {
 
     public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
+        
+        (new Thread() {
+            public void run() {
+                update();
+            }
+        }).start();
+        
         pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Low, this);
