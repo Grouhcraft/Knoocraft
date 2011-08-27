@@ -176,7 +176,6 @@ public class KcCommand implements CommandExecutor {
 
 		Location ploc = player.getLocation();
 		World world = ploc.getWorld();
-		int air = Material.AIR.getId();
 
 		// Min et max vertical
 		int minY = ploc.getBlockY() + 2;
@@ -215,19 +214,19 @@ public class KcCommand implements CommandExecutor {
 			// On teste si la place est libre
 			for (int y = minY; y <= maxcouY; y++) {
 				for (int z = minZ; z <= cou1Z; z++) {
-					if (world.getBlockTypeIdAt(xCst, y, z) != air) {
+					if (!world.getBlockAt(xCst, y, z).isEmpty()) {
 						libre = false;
 					}
 				}
 				for (int z = cou2Z; z <= maxZ; z++) {
-					if (world.getBlockTypeIdAt(xCst, y, z) != air) {
+					if (!world.getBlockAt(xCst, y, z).isEmpty()) {
 						libre = false;
 					}
 				}
 			}
 			for (int y = maxcouY + 1; y <= maxY; y++) {
 				for (int z = cou1Z + 1; z < cou2Z; z++) {
-					if (world.getBlockTypeIdAt(xCst, y, z) != air) {
+					if (!world.getBlockAt(xCst, y, z).isEmpty()) {
 						libre = false;
 					}
 				}
@@ -254,6 +253,17 @@ public class KcCommand implements CommandExecutor {
 								Material.NETHERRACK);
 					}
 				}
+				// On construit le socle
+				for (int y = ploc.getBlockY(); y < minY; y++) {
+					for (int z = minZ - 1; z <= maxZ + 1; z++) {
+						if (world.getBlockAt(xCst, y, z).getType() == Material.AIR
+								|| world.getBlockAt(xCst, y, z).getType() == Material.SNOW) {
+							world.getBlockAt(xCst, y, z)
+									.setType(Material.GLASS);
+						}
+					}
+				}
+
 			}
 		} else {
 			// Les couilles s'étendent du nord au sud face au joueur
@@ -280,19 +290,19 @@ public class KcCommand implements CommandExecutor {
 			// On teste si la place est libre
 			for (int y = minY; y <= maxcouY; y++) {
 				for (int x = minX; x <= cou1X; x++) {
-					if (world.getBlockTypeIdAt(x, y, zCst) != air) {
+					if (!world.getBlockAt(x, y, zCst).isEmpty()) {
 						libre = false;
 					}
 				}
 				for (int x = cou2X; x <= maxX; x++) {
-					if (world.getBlockTypeIdAt(x, y, zCst) != air) {
+					if (!world.getBlockAt(x, y, zCst).isEmpty()) {
 						libre = false;
 					}
 				}
 			}
 			for (int y = maxcouY + 1; y <= maxY; y++) {
 				for (int x = cou1X + 1; x < cou2X; x++) {
-					if (world.getBlockTypeIdAt(x, y, zCst) != air) {
+					if (!world.getBlockAt(x, y, zCst).isEmpty()) {
 						libre = false;
 					}
 				}
@@ -317,6 +327,16 @@ public class KcCommand implements CommandExecutor {
 					for (int y = minglaY; y <= maxY; y++) {
 						world.getBlockAt(x, y, zCst).setType(
 								Material.NETHERRACK);
+					}
+				}
+				// On construit le socle
+				for (int y = ploc.getBlockY(); y < minY; y++) {
+					for (int x = minX - 1; x <= maxX + 1; x++) {
+						if (world.getBlockAt(x, y, zCst).getType() == Material.AIR
+								|| world.getBlockAt(x, y, zCst).getType() == Material.SNOW) {
+							world.getBlockAt(x, y, zCst)
+									.setType(Material.GLASS);
+						}
 					}
 				}
 			}
