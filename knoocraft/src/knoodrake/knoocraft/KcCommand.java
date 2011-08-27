@@ -14,12 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.util.Vector;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
 import knoodrake.knoocraft.KcMessaging;
+import knoodrake.knoocraft.Orientation.CardinalPoints;
 
 public class KcCommand implements CommandExecutor {
 	private final knoocraft plugin;
@@ -174,173 +174,9 @@ public class KcCommand implements CommandExecutor {
 		}
 		say(R.get("penis.msg.size") + size);
 
-		Location ploc = player.getLocation();
-		World world = ploc.getWorld();
+		Penis penis = new Penis(plugin, player, size);
+		penis.build();
 
-		// Min et max vertical
-		int minY = ploc.getBlockY() + 2;
-		int maxY = ploc.getBlockY() + 4 * size + 1;
-
-		// Autres points de repère verticaux
-		int maxcouY = minY + size - 1;
-		int minglaY = maxcouY + 2 * size + 1;
-
-		boolean libre = true;
-
-		// Orientation du regard du joueur
-		Orientation ori = dirEye();
-		if (ori == Orientation.NORTH || ori == Orientation.SOUTH) {
-			// Les couilles s'étendent d'est en ouest face au joueur
-			int minZ, maxZ;
-			if (size % 2 == 1) {
-				int ray = (3 * size - 1) / 2;
-				minZ = ploc.getBlockZ() - ray;
-				maxZ = ploc.getBlockZ() + ray;
-			} else {
-				int ray = 3 * (size / 2) - 1;
-				minZ = ploc.getBlockZ() - ray;
-				maxZ = ploc.getBlockZ() + ray + 1;
-			}
-			// Autres points de repère horizontaux
-			int cou1Z = minZ + size - 1;
-			int cou2Z = maxZ - size + 1;
-			// x est constant
-			int xCst;
-			if (ori == Orientation.NORTH) {
-				xCst = ploc.getBlockX() - 1 - R.getInt("penis.dist_user");
-			} else {
-				xCst = ploc.getBlockX() + 1 + R.getInt("penis.dist_user");
-			}
-			// On teste si la place est libre
-			for (int y = minY; y <= maxcouY; y++) {
-				for (int z = minZ; z <= cou1Z; z++) {
-					if (!world.getBlockAt(xCst, y, z).isEmpty()) {
-						libre = false;
-					}
-				}
-				for (int z = cou2Z; z <= maxZ; z++) {
-					if (!world.getBlockAt(xCst, y, z).isEmpty()) {
-						libre = false;
-					}
-				}
-			}
-			for (int y = maxcouY + 1; y <= maxY; y++) {
-				for (int z = cou1Z + 1; z < cou2Z; z++) {
-					if (!world.getBlockAt(xCst, y, z).isEmpty()) {
-						libre = false;
-					}
-				}
-			}
-			if (!libre) {
-				say(R.get("penis.msg.no_space"));
-			} else {
-				// On construit la bite
-				for (int y = minY; y <= maxcouY; y++) {
-					for (int z = minZ; z <= cou1Z; z++) {
-						world.getBlockAt(xCst, y, z).setType(Material.DIRT);
-					}
-					for (int z = cou2Z; z <= maxZ; z++) {
-						world.getBlockAt(xCst, y, z).setType(Material.DIRT);
-					}
-				}
-				for (int z = cou1Z + 1; z < cou2Z; z++) {
-					for (int y = maxcouY + 1; y < minglaY; y++) {
-						world.getBlockAt(xCst, y, z).setType(Material.WOOL);
-						world.getBlockAt(xCst, y, z).setData((byte) 6);
-					}
-					for (int y = minglaY; y <= maxY; y++) {
-						world.getBlockAt(xCst, y, z).setType(
-								Material.NETHERRACK);
-					}
-				}
-				// On construit le socle
-				for (int y = ploc.getBlockY(); y < minY; y++) {
-					for (int z = minZ - 1; z <= maxZ + 1; z++) {
-						if (world.getBlockAt(xCst, y, z).getType() == Material.AIR
-								|| world.getBlockAt(xCst, y, z).getType() == Material.SNOW) {
-							world.getBlockAt(xCst, y, z)
-									.setType(Material.GLASS);
-						}
-					}
-				}
-
-			}
-		} else {
-			// Les couilles s'étendent du nord au sud face au joueur
-			int minX, maxX;
-			if (size % 2 == 1) {
-				int ray = (3 * size - 1) / 2;
-				minX = ploc.getBlockX() - ray;
-				maxX = ploc.getBlockX() + ray;
-			} else {
-				int ray = 3 * (size / 2) - 1;
-				minX = ploc.getBlockX() - ray;
-				maxX = ploc.getBlockX() + ray + 1;
-			}
-			// Autres points de repère horizontaux
-			int cou1X = minX + size - 1;
-			int cou2X = maxX - size + 1;
-			// z est constant
-			int zCst;
-			if (ori == Orientation.EAST) {
-				zCst = ploc.getBlockZ() - 1 - R.getInt("penis.dist_user");
-			} else {
-				zCst = ploc.getBlockZ() + 1 + R.getInt("penis.dist_user");
-			}
-			// On teste si la place est libre
-			for (int y = minY; y <= maxcouY; y++) {
-				for (int x = minX; x <= cou1X; x++) {
-					if (!world.getBlockAt(x, y, zCst).isEmpty()) {
-						libre = false;
-					}
-				}
-				for (int x = cou2X; x <= maxX; x++) {
-					if (!world.getBlockAt(x, y, zCst).isEmpty()) {
-						libre = false;
-					}
-				}
-			}
-			for (int y = maxcouY + 1; y <= maxY; y++) {
-				for (int x = cou1X + 1; x < cou2X; x++) {
-					if (!world.getBlockAt(x, y, zCst).isEmpty()) {
-						libre = false;
-					}
-				}
-			}
-			if (!libre) {
-				say(R.get("penis.msg.no_space"));
-			} else {
-				// On construit la bite
-				for (int y = minY; y <= maxcouY; y++) {
-					for (int x = minX; x <= cou1X; x++) {
-						world.getBlockAt(x, y, zCst).setType(Material.DIRT);
-					}
-					for (int x = cou2X; x <= maxX; x++) {
-						world.getBlockAt(x, y, zCst).setType(Material.DIRT);
-					}
-				}
-				for (int x = cou1X + 1; x < cou2X; x++) {
-					for (int y = maxcouY + 1; y < minglaY; y++) {
-						world.getBlockAt(x, y, zCst).setType(Material.WOOL);
-						world.getBlockAt(x, y, zCst).setData((byte) 6);
-					}
-					for (int y = minglaY; y <= maxY; y++) {
-						world.getBlockAt(x, y, zCst).setType(
-								Material.NETHERRACK);
-					}
-				}
-				// On construit le socle
-				for (int y = ploc.getBlockY(); y < minY; y++) {
-					for (int x = minX - 1; x <= maxX + 1; x++) {
-						if (world.getBlockAt(x, y, zCst).getType() == Material.AIR
-								|| world.getBlockAt(x, y, zCst).getType() == Material.SNOW) {
-							world.getBlockAt(x, y, zCst)
-									.setType(Material.GLASS);
-						}
-					}
-				}
-			}
-		}
 		return true;
 	}
 
@@ -500,63 +336,18 @@ public class KcCommand implements CommandExecutor {
 	}
 
 	/**
-	 * Les 4 points cardinaux
-	 */
-	private enum Orientation {
-		NORTH, // -1, 0, 0
-		SOUTH, // 1, 0, 0
-		EAST, // 0, 0, -1
-		WEST
-		// 0 , 0, 1
-	}
-
-	/**
-	 * Renvoie le point cardinal vers lequel est orienté le regard du joueur
-	 * 
-	 * @return Orientation
-	 */
-	private Orientation dirEye() {
-		Location eyeloc = player.getEyeLocation();
-		Vector dir = eyeloc.getDirection();
-		double dirx = dir.getX();
-		double dirz = dir.getZ();
-		if (dirz == dirx) {
-			if (dirx >= 0) {
-				return Orientation.SOUTH;
-			}
-			return Orientation.NORTH;
-		}
-		if (dirz == -dirx) {
-			if (dirz > 0) {
-				return Orientation.WEST;
-			}
-			return Orientation.EAST;
-		}
-		if (dirz < dirx) {
-			if (dirz > -dirx) {
-				return Orientation.SOUTH;
-			}
-			return Orientation.EAST;
-		}
-		// dirz > dirx
-		if (dirz > -dirx) {
-			return Orientation.WEST;
-		}
-		return Orientation.NORTH;
-	}
-
-	/**
 	 * Affiche le point cardinal vers lequel est orienté le regard du joueur
 	 */
 	private boolean cmdOrientation() {
-		Orientation ori = dirEye();
-		if (ori == Orientation.NORTH) {
+		Orientation orientation = new Orientation(player);
+		CardinalPoints cardinalPoint = orientation.dirEye();
+		if (cardinalPoint == Orientation.CardinalPoints.NORTH) {
 			say(R.get("orientation.north"));
 		} else {
-			if (ori == Orientation.SOUTH) {
+			if (cardinalPoint == Orientation.CardinalPoints.SOUTH) {
 				say(R.get("orientation.south"));
 			} else {
-				if (ori == Orientation.EAST) {
+				if (cardinalPoint == Orientation.CardinalPoints.EAST) {
 					say(R.get("orientation.east"));
 				} else {
 					say(R.get("orientation.west"));
@@ -621,11 +412,11 @@ public class KcCommand implements CommandExecutor {
 	}
 
 	/**
-	 * Formate le msg & l'envoi au joueur courrant.
+	 * Formate le msg & l'envoie au joueur courrant.
 	 * 
 	 * @param text
 	 */
-	private void say(String text) {
+	public void say(String text) {
 		player.sendMessage(msg.format(text));
 	}
 

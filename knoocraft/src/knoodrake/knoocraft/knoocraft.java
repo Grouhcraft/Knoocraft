@@ -25,19 +25,14 @@ import java.util.logging.Logger;
 * @author knoodrake
 */
 public class knoocraft extends JavaPlugin {
-    private final KnoocraftPlayerListener playerListener = new KnoocraftPlayerListener(this);
-    private final KnoocraftBlockListener blockListener = new KnoocraftBlockListener(this);
-    private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
-    
-    public Configuration config;
-    
-    public static PermissionHandler permissionHandler;
     public static Logger log = Logger.getLogger("Minecraft");
-
-    public void onDisable() {
-        //
-    }
+    public static PermissionHandler permissionHandler;
+    private final KnoocraftBlockListener blockListener = new KnoocraftBlockListener(this);
+    public Configuration config;
+    private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
+	private KcCommand kcCommand;
     
+    private final KnoocraftPlayerListener playerListener = new KnoocraftPlayerListener(this);
     public knoocraft() throws IOException {
     	super();
     	new File("plugins" + File.separator + "Knoocraft" + File.separator).mkdirs();
@@ -52,11 +47,7 @@ public class knoocraft extends JavaPlugin {
     	}
     }
 
-    public Configuration getConfig() {
-		return config;
-	}
-
-	private void createDefaultConfig() {
+    private void createDefaultConfig() {
 		getConfig().setProperty("greenwooler.firstColor", R.getInt("greenwooler.firstColor"));
         getConfig().setProperty("greenwooler.secondColor", R.getInt("greenwooler.secondColor"));
         getConfig().setProperty("sanitizehell.default_range", R.getInt("sanitizehell.default_range"));
@@ -67,8 +58,37 @@ public class knoocraft extends JavaPlugin {
         getConfig().setProperty("penis.dist_user", R.getInt("penis.dist_user"));
         getConfig().save();
 	}
+    
+    //TODO: Utiliser un fichier de config.. 
+	public String get_messages(String string) {
+		HashMap<String, String> messages = new HashMap<String, String>();
+		messages.put("KcCommandInterpreter.invalid_command_name", "<red/>Commande \"%s\" non reconnue.. !");
+	
+		
+		return messages.get(string);
+	}
 
-	public void onEnable() {
+    public Configuration getConfig() {
+		return config;
+	}
+
+	public KcCommand getKcCommand() {
+		return kcCommand;
+	}
+
+	public boolean isDebugging(final Player player) {
+        if (debugees.containsKey(player)) {
+            return debugees.get(player);
+        } else {
+            return false;
+        }
+    }
+    
+    public void onDisable() {
+        //
+    }
+
+    public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
@@ -76,13 +96,18 @@ public class knoocraft extends JavaPlugin {
         pm.registerEvent(Event.Type.BLOCK_PHYSICS, blockListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_CANBUILD, blockListener, Priority.Normal, this);
         
-        getCommand("kc").setExecutor(new KcCommand(this));
+        this.kcCommand = new KcCommand(this);
+        getCommand("kc").setExecutor(this.kcCommand);
         setupPermissions();
 
         PluginDescriptionFile pdfFile = this.getDescription();
         log.info( "[KnooCraft] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
     }
-    
+
+    public void setDebugging(final Player player, final boolean value) {
+        debugees.put(player, value);
+    }
+
     private void setupPermissions() {
         if (permissionHandler != null) {
             return;
@@ -98,27 +123,6 @@ public class knoocraft extends JavaPlugin {
         permissionHandler = ((Permissions) permissionsPlugin).getHandler();
         System.out.println("[KnooCraft] Found and will use plugin "+((Permissions)permissionsPlugin).getDescription().getFullName());
     }
-
-    public boolean isDebugging(final Player player) {
-        if (debugees.containsKey(player)) {
-            return debugees.get(player);
-        } else {
-            return false;
-        }
-    }
-
-    public void setDebugging(final Player player, final boolean value) {
-        debugees.put(player, value);
-    }
-
-    //TODO: Utiliser un fichier de config.. 
-	public String get_messages(String string) {
-		HashMap<String, String> messages = new HashMap<String, String>();
-		messages.put("KcCommandInterpreter.invalid_command_name", "<red/>Commande \"%s\" non reconnue.. !");
-	
-		
-		return messages.get(string);
-	}
 }
 
 
