@@ -89,7 +89,7 @@ public class KcCommand implements CommandExecutor {
 	 * @return vrai si Ok.
 	 */
 	@SuppressWarnings("unused")
-	private boolean cmd_getwool() {
+	public boolean cmd_getwool() {
 		HashMap<String, Short> colors = new HashMap<String, Short>();
 		colors.put("white", (short) 0);
 		colors.put("orange", (short) 1);
@@ -349,7 +349,7 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private boolean cmd_eyetp() {
+	public boolean cmd_eyetp() {
 		Location loc = player.getTargetBlock(null, 1024).getLocation();
 		loc.setY(loc.getBlockY() + 1);
 		player.teleport(loc);
@@ -360,7 +360,7 @@ public class KcCommand implements CommandExecutor {
 	 * Affiche le point cardinal vers lequel est orienté le regard du joueur
 	 */
 	@SuppressWarnings("unused")
-	private boolean cmd_orientation() {
+	public boolean cmd_orientation() {
 		Orientation orientation = new Orientation(player);
 		CardinalPoints cardinalPoint = orientation.dirEye();
 		if (cardinalPoint == Orientation.CardinalPoints.NORTH) {
@@ -387,7 +387,7 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private boolean cmd_give() {
+	public boolean cmd_give() {
 		/* ---------------------------------------- */
 		/*
 		 * Traitement des params /* ----------------------------------------
@@ -450,7 +450,7 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private boolean cmd_listaliases() {
+	public boolean cmd_listaliases() {
 		Set<String> k = aliases.keySet();
 		for (String cmdName : k) {
 			say(R.get("list_aliases.cmd.1") + cmdName
@@ -502,7 +502,7 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private boolean cmd_greenwooler() {
+	public boolean cmd_greenwooler() {
 		if (countCmdArgs() >= 1) {
 			boolean OnOff = getArg(0).equalsIgnoreCase("on") ? true : false;
 			if (OnOff) {
