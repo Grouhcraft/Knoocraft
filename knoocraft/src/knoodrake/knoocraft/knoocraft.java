@@ -163,6 +163,9 @@ public class knoocraft extends JavaPlugin {
 	}
     
     //TODO: Utiliser un fichier de config.. 
+    // @melendil: HEY, je comprend pas.. ca sert à quoi ça ?..
+    // comment tu compte trouver "string" dans "messages" alors que 
+    // tu créé "messages" 2 lignes plus haut et vide... ?..
 	public String get_messages(String string) {
 		HashMap<String, String> messages = new HashMap<String, String>();
 		messages.put("KcCommandInterpreter.invalid_command_name", "<red/>Commande \"%s\" non reconnue.. !");

@@ -29,9 +29,9 @@ public class KcCommand implements CommandExecutor {
 	private Player player = null;
 	private CommandSender sender = null;
 	private HashMap<String, ArrayList<String>> aliases = new HashMap<String, ArrayList<String>>();
-	private boolean SuperSpeeded = false; 
+	private boolean SuperSpeeded = false;
+	private KcTeleportation teleport = new KcTeleportation();
 
-	// toto
 	public KcCommand(knoocraft plugin) {
 		this.plugin = plugin;
 	}
@@ -88,7 +88,6 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return vrai si Ok.
 	 */
-	@SuppressWarnings("unused")
 	public boolean cmd_getwool() {
 		HashMap<String, Short> colors = new HashMap<String, Short>();
 		colors.put("white", (short) 0);
@@ -293,7 +292,7 @@ public class KcCommand implements CommandExecutor {
 			String label, String[] split) {
 		this.args = split;
 		this.sender = sender;
-		//TODO faire marcher..
+		//FIXME faire marcher ces tests de perms/op..
 		// if(!checkIsPlayer()) return false;
 		// if(!checkPerm("knoocraft.getwool")) return false;
 		// if(!checkOp()) return false;
@@ -317,13 +316,14 @@ public class KcCommand implements CommandExecutor {
 					{ "give", "g" },
 					{ "eyetp", "etp" }, 
 					{ "orient", "orientation", "compass" },
-					{ "superspeed", "speed", "s"}
+					{ "superspeed", "speed", "s"},
+					{ "tp" }
 				});
 		}
 		
 		//on tente de trouver la méthode correspondant à 
 		//la commande ou l'alias tappé (mainCmd).
-		//TODO S'occuper de ces exceptions là..
+		//FIXME S'occuper de ces exceptions catchés a blanc
 		for (String cmdName : aliases.keySet()) {
 			if(isCommandOrAlias(mainCmd, cmdName)) {
 				java.lang.reflect.Method method;
@@ -342,13 +342,38 @@ public class KcCommand implements CommandExecutor {
 		}
 		return cmd_unknowncmd();
 	}
+	
+	public void cmd_tp() 
+	{
+		if(countCmdArgs() == 0) return;
+		String action = getArg(0).toLowerCase();
+		
+		if(action.equals("add"))
+		{
+			
+		}
+		
+		if(action.equals("del"))
+		{
+			
+		}
+		
+		if(action.equals("list"))
+		{
+			
+		}
+		
+		if(action.equals("changeowner"))
+		{
+			
+		}
+	}
 
 	/**
 	 * Téléporte si possible le joueur à l'emplacement visée sous le curseur
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	public boolean cmd_eyetp() {
 		Location loc = player.getTargetBlock(null, 1024).getLocation();
 		loc.setY(loc.getBlockY() + 1);
@@ -359,7 +384,6 @@ public class KcCommand implements CommandExecutor {
 	/**
 	 * Affiche le point cardinal vers lequel est orienté le regard du joueur
 	 */
-	@SuppressWarnings("unused")
 	public boolean cmd_orientation() {
 		Orientation orientation = new Orientation(player);
 		CardinalPoints cardinalPoint = orientation.dirEye();
@@ -386,7 +410,6 @@ public class KcCommand implements CommandExecutor {
 	 * De plus, la qtt est facultative. on peu donc tapper: /kc g wood pour avoir 1 bloc de bois
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	public boolean cmd_give() {
 		/* ---------------------------------------- */
 		/*
@@ -449,7 +472,6 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	public boolean cmd_listaliases() {
 		Set<String> k = aliases.keySet();
 		for (String cmdName : k) {
@@ -501,7 +523,6 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	public boolean cmd_greenwooler() {
 		if (countCmdArgs() >= 1) {
 			boolean OnOff = getArg(0).equalsIgnoreCase("on") ? true : false;
