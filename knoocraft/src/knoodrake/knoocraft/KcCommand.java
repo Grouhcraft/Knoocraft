@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Set;
-import java.util.logging.Level;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.command.Command;
@@ -19,7 +18,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
-import knoodrake.knoocraft.KcMessaging;
+import Utils.KcMessaging;
+import Utils.KcStrings;
+
 import knoodrake.knoocraft.Orientation.CardinalPoints;
 
 public class KcCommand implements CommandExecutor {
@@ -27,7 +28,6 @@ public class KcCommand implements CommandExecutor {
 	private KcMessaging msg = new KcMessaging();
 	private String[] args = {};
 	private Player player = null;
-	private CommandSender sender = null;
 	private HashMap<String, ArrayList<String>> aliases = new HashMap<String, ArrayList<String>>();
 	private boolean SuperSpeeded = false;
 	private KcTeleportation teleport = new KcTeleportation();
@@ -36,31 +36,20 @@ public class KcCommand implements CommandExecutor {
 		this.plugin = plugin;
 	}
 
-	@SuppressWarnings("unused")
-	private boolean checkPerm(String node) {
-		boolean x = (knoocraft.permissionHandler.has(player, node));
-		if (!x)
-			knoocraft.log.log(Level.WARNING, msg
-					.format("<red/> checkPerm: fails"));
-		return x;
-	}
-
-	@SuppressWarnings("unused")
-	private boolean checkIsPlayer() {
-		boolean x = sender.getClass().getName().equals("Player");
-		if (!x)
-			knoocraft.log.log(Level.WARNING, msg
-					.format("<red/> checkIsPlayer: fails"));
-		return x;
-	}
-
-	@SuppressWarnings("unused")
-	private boolean checkOp() {
-		boolean x = player.isOp();
-		if (!x)
-			knoocraft.log.log(Level.WARNING, msg
-					.format("<red/> checkOp: fails"));
-		return x;
+	/**
+	 * Vérifie si le joueur courrant (tappant la commande) à le droit de le faire.<br/>
+	 * Exemple à metre en 1<sup>ère</sup> ligne d'une méthode d'une commande:<br/>
+	 * <code>if(!playerHasRightsForCommand("getwool")) return false;</code><br/>
+	 * Tout simplement !
+	 * @param cmdname : nom de la commande (ex: <i>eyetp</i>) 
+	 * @return true ou false selon que le joueur à le droit ou non
+	 */
+	private boolean playerHasRightsForCommand(String cmdname) {
+		if(!player.hasPermission("knoocraft.commands." + cmdname.toLowerCase())) {
+			say(KcStrings.getString("player_doesnt_have_permission"));
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -89,6 +78,8 @@ public class KcCommand implements CommandExecutor {
 	 * @return vrai si Ok.
 	 */
 	public boolean cmd_getwool() {
+		if(!playerHasRightsForCommand("getwool")) return false;
+		
 		HashMap<String, Short> colors = new HashMap<String, Short>();
 		colors.put("white", (short) 0);
 		colors.put("orange", (short) 1);
@@ -157,16 +148,14 @@ public class KcCommand implements CommandExecutor {
 
 	/**
 	 * Dessine une bite de la taille souhaitée
-	 * 
-	 * @return vrai si Ok
+	 * La taille (paramètre optionel) correspond au
+	 * diamètre d'une couille carrée
 	 */
 	public boolean cmd_penis() {
-
-		// size correspond au diamètre d'une couille (carrée, la couille)
-		int size = plugin.getConfig().getInt("penis.default_size",
-				R.getInt("penis.default_size"));
-		if (countCmdArgs() >= 1)
-			size = Integer.parseInt(getArg(0));
+		if(!playerHasRightsForCommand("penis")) return false;
+		
+		int size = plugin.getConfig().getInt("penis.default_size", R.getInt("penis.default_size"));
+		if (countCmdArgs() >= 1) size = Integer.parseInt(getArg(0));
 		int sizeMax = R.getInt("penis.max_size");
 		if (size > sizeMax) {
 			say(R.get("penis.msg.too_big.1") + size
@@ -188,7 +177,10 @@ public class KcCommand implements CommandExecutor {
 	 * 
 	 * @return un booléen
 	 */
-	public boolean cmd_sanitizehell() {
+	public boolean cmd_sanitizehell() 
+	{
+		if(!playerHasRightsForCommand("sanitizehell")) return false;
+		
 		int range = plugin.getConfig().getInt("sanitizehell.default_range",
 				R.getInt("sanitizehell.default_range"));
 		if (countCmdArgs() >= 1)
@@ -291,11 +283,6 @@ public class KcCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] split) {
 		this.args = split;
-		this.sender = sender;
-		//FIXME faire marcher ces tests de perms/op..
-		// if(!checkIsPlayer()) return false;
-		// if(!checkPerm("knoocraft.getwool")) return false;
-		// if(!checkOp()) return false;
 		this.player = (Player) sender;
 
 		if (split.length < 1)
@@ -375,6 +362,8 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	public boolean cmd_eyetp() {
+		if(!playerHasRightsForCommand("eyetp")) return false;
+		
 		Location loc = player.getTargetBlock(null, 1024).getLocation();
 		loc.setY(loc.getBlockY() + 1);
 		player.teleport(loc);
@@ -385,6 +374,8 @@ public class KcCommand implements CommandExecutor {
 	 * Affiche le point cardinal vers lequel est orienté le regard du joueur
 	 */
 	public boolean cmd_orientation() {
+		if(!playerHasRightsForCommand("orientation")) return false;
+		
 		Orientation orientation = new Orientation(player);
 		CardinalPoints cardinalPoint = orientation.dirEye();
 		if (cardinalPoint == Orientation.CardinalPoints.NORTH) {
@@ -411,10 +402,13 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	public boolean cmd_give() {
-		/* ---------------------------------------- */
-		/*
-		 * Traitement des params /* ----------------------------------------
-		 */
+		if(!playerHasRightsForCommand("give")) return false;
+		
+		/* ----------------------------------------
+		 *
+		 * Traitement des params 
+		 *
+		 * ---------------------------------------- */
 		if (countCmdArgs() >= 1) {
 			String tmp = getArg(0);
 			Material material = null;
@@ -430,10 +424,11 @@ public class KcCommand implements CommandExecutor {
 			if (countCmdArgs() > 2)
 				if (getArg(2).equalsIgnoreCase("inchest"))
 					in_chest = true;
-			/* ---------------------------------------- */
-			/*
-			 * Code /* ----------------------------------------
-			 */
+			/* ----------------------------------------
+			 *
+			 * Code 
+			 * 
+			 * -------------------------------------- */
 
 			Object destination;
 			ItemStack given = null;
@@ -473,6 +468,8 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	public boolean cmd_listaliases() {
+		if(!playerHasRightsForCommand("listaliases")) return false;
+
 		Set<String> k = aliases.keySet();
 		for (String cmdName : k) {
 			say(R.get("list_aliases.cmd.1") + cmdName
@@ -524,6 +521,8 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	public boolean cmd_greenwooler() {
+		if(!playerHasRightsForCommand("greenwooler")) return false;
+		
 		if (countCmdArgs() >= 1) {
 			boolean OnOff = getArg(0).equalsIgnoreCase("on") ? true : false;
 			if (OnOff) {

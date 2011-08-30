@@ -10,20 +10,19 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
-
-import org.bukkit.plugin.Plugin;
 import org.bukkit.util.FileUtil;
 import org.bukkit.util.config.Configuration;
 
@@ -35,7 +34,6 @@ import java.util.logging.Logger;
 */
 public class knoocraft extends JavaPlugin {
     public static Logger log = Logger.getLogger("Minecraft");
-    public static PermissionHandler permissionHandler;
     private final KnoocraftBlockListener blockListener = new KnoocraftBlockListener(this);
     public Configuration config;
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
@@ -217,20 +215,38 @@ public class knoocraft extends JavaPlugin {
         debugees.put(player, value);
     }
 
-    private void setupPermissions() {
-        if (permissionHandler != null) {
-            return;
-        }
-        
-        Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
-        
-        if (permissionsPlugin == null) {
-        	System.out.println("[KnooCraft] Permission system not detected, defaulting to OP");
-            return;
-        } 
-        
-        permissionHandler = ((Permissions) permissionsPlugin).getHandler();
-        System.out.println("[KnooCraft] Found and will use plugin "+((Permissions)permissionsPlugin).getDescription().getFullName());
+    private void setupPermissions() 
+    {
+    	PluginManager pm = getServer().getPluginManager();
+    	pm.addPermission(new Permission("knoocraft.commands.eyetp", 		PermissionDefault.OP));
+    	pm.addPermission(new Permission("knoocraft.commands.give", 			PermissionDefault.OP));
+    	pm.addPermission(new Permission("knoocraft.commands.sanitizehell", 	PermissionDefault.OP));
+    	pm.addPermission(new Permission("knoocraft.commands.greenwooler", 	PermissionDefault.OP));
+    	pm.addPermission(new Permission("knoocraft.commands.bite", 			PermissionDefault.OP));
+    	pm.addPermission(new Permission("knoocraft.commands.orient", 		PermissionDefault.TRUE));
+    	pm.addPermission(new Permission("knoocraft.commands.listalias", 	PermissionDefault.TRUE));
+    	
+    	// Toutes les commmandes
+    	Map<String, Boolean> childrens = new HashMap<String, Boolean>();
+    	childrens.put("knoocraft.commands.eyetp", true);
+    	childrens.put("knoocraft.commands.give", true);
+    	childrens.put("knoocraft.commands.sanitizehell", true);
+    	childrens.put("knoocraft.commands.greenwooler", true);
+    	childrens.put("knoocraft.commands.bite", true);
+    	childrens.put("knoocraft.commands.orient", true);
+    	childrens.put("knoocraft.commands.listalias", true);
+    	pm.addPermission(new Permission("knoocraft.commands.all"
+    			, "all knoocraft commands"
+    			, PermissionDefault.FALSE
+    			, childrens));
+    	
+    	// Tout le plugin
+    	Map<String, Boolean> child = new HashMap<String, Boolean>();
+    	child.put("knoocraft.commands.all", true);
+    	pm.addPermission(new Permission("knoocraft.all"
+    			, "all knoocraft commands"
+    			, PermissionDefault.FALSE
+    			, child ));
     }
 }
 
