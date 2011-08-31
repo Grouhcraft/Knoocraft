@@ -1,8 +1,10 @@
 package knoodrake.knoocraft;
 
+import java.util.Date;
+
 import org.bukkit.Location;
 
-import sun.util.calendar.BaseCalendar.Date;
+
 
 public class KcLocation {
 

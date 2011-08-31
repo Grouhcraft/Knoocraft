@@ -1,6 +1,6 @@
 name: Knoocraft
 main: knoodrake.knoocraft.knoocraft
-version: 1.3
+version: 1.4
 commands:
     Kc:
         description: do some stuff..

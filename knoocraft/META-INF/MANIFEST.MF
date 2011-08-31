@@ -4,5 +4,5 @@ Bundle-Name: knoocraft
 Bundle-SymbolicName: knoocraft
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: knoocraft.jar
-Export-Package: knoodrake.knoocraft
+Export-Package: src.knoodrake.knoocraft
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

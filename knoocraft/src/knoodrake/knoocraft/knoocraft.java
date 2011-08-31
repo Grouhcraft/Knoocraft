@@ -222,7 +222,7 @@ public class knoocraft extends JavaPlugin {
     	pm.addPermission(new Permission("knoocraft.commands.give", 			PermissionDefault.OP));
     	pm.addPermission(new Permission("knoocraft.commands.sanitizehell", 	PermissionDefault.OP));
     	pm.addPermission(new Permission("knoocraft.commands.greenwooler", 	PermissionDefault.OP));
-    	pm.addPermission(new Permission("knoocraft.commands.bite", 			PermissionDefault.OP));
+    	pm.addPermission(new Permission("knoocraft.commands.penis", 		PermissionDefault.OP));
     	pm.addPermission(new Permission("knoocraft.commands.orient", 		PermissionDefault.TRUE));
     	pm.addPermission(new Permission("knoocraft.commands.listalias", 	PermissionDefault.TRUE));
     	
@@ -232,7 +232,7 @@ public class knoocraft extends JavaPlugin {
     	childrens.put("knoocraft.commands.give", true);
     	childrens.put("knoocraft.commands.sanitizehell", true);
     	childrens.put("knoocraft.commands.greenwooler", true);
-    	childrens.put("knoocraft.commands.bite", true);
+    	childrens.put("knoocraft.commands.penis", true);
     	childrens.put("knoocraft.commands.orient", true);
     	childrens.put("knoocraft.commands.listalias", true);
     	pm.addPermission(new Permission("knoocraft.commands.all"

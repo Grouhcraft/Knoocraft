@@ -1,10 +1,60 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>knoocraft</groupId>
+  <groupId>knoodrake</groupId>
   <artifactId>knoocraft</artifactId>
-  <version>1.2</version>
-  <name>knoocraft</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Knoocraft</name>
   <url>https://github.com/knoodrake/Knoocraft</url>
-  <modules>
-  </modules>
+  <ciManagement>
+  </ciManagement>
+  <scm>
+  	<connection>scm:git:git://github.com/knoodrake/Knoocraft.git</connection>
+  	<developerConnection>scm:git:git@github.com:knoodrake/Knoocraft.git</developerConnection>
+  	<url>https://github.com/knoodrake/Knoocraft</url>
+  </scm>
+  <organization>
+  	<name>Grouhcraft</name>
+  	<url>https://github.com/organizations/Grouhcraft</url>
+  </organization>
+  <build>
+  <sourceDirectory>src/</sourceDirectory>
+  <outputDirectory>bin/</outputDirectory>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>2.0.2</version>
+              <configuration>
+                  <source>1.6</source>
+                  <target>1.6</target>
+              </configuration>
+          </plugin>
+          <plugin>
+          	<groupId>org.apache.maven.plugins</groupId>
+          	<artifactId>maven-jar-plugin</artifactId>
+			<configuration>
+				<archive>
+					<addMavenDescriptor>true</addMavenDescriptor>
+					<pomPropertiesFile>true</pomPropertiesFile>
+					<manifest>
+						<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+					</manifest>
+					<manifestEntries>
+					</manifestEntries>
+				</archive>	
+          	</configuration>
+          	<version>2.3.2</version>
+          </plugin>
+      </plugins>
+  </build>
+  <dependencies>
+      <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>bukkit</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>
