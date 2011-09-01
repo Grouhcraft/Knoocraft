@@ -53,23 +53,24 @@ public class KcMail {
 	{
 		String l_token = "##";
 		String r_token = "##";
-		String regexp_modifiers = "g";
+		//String regexp_modifiers = "g";
 		
-		string.replaceAll("/"+l_token+ "POSITION"			+r_token+"/" + regexp_modifiers, player.getLocation().toString());
-		string.replaceAll("/"+l_token+ "PLAYERNAME"			+r_token+"/" + regexp_modifiers, player.getName());
-		string.replaceAll("/"+l_token+ "PLAYERTEXT"			+r_token+"/" + regexp_modifiers, playerText);
-		string.replaceAll("/"+l_token+ "INGAMETIME"			+r_token+"/" + regexp_modifiers, String.valueOf(player.getWorld().getTime()));
-		string.replaceAll("/"+l_token+ "ITEM_IN_HAND"		+r_token+"/" + regexp_modifiers, player.getItemInHand().getType().name());		
-		string.replaceAll("/"+l_token+ "PLAYER_ISOP"		+r_token+"/" + regexp_modifiers, "IsOP():" + (player.isOp() ? "Oui" : "Non"));
-		string.replaceAll("/"+l_token+ "PLAYER_IP"			+r_token+"/" + regexp_modifiers, player.getAddress().toString());
-		string.replaceAll("/"+l_token+ "WORLD_NAME"			+r_token+"/" + regexp_modifiers, player.getWorld().getName());
-		string.replaceAll("/"+l_token+ "CHUNK_X"			+r_token+"/" + regexp_modifiers, String.valueOf(player.getWorld().getChunkAt(player.getLocation()).getX()));
-		string.replaceAll("/"+l_token+ "CHUNK_Z"			+r_token+"/" + regexp_modifiers, String.valueOf(player.getWorld().getChunkAt(player.getLocation()).getZ()));
-		string.replaceAll("/"+l_token+ "PLAYER_HEALTH"		+r_token+"/" + regexp_modifiers, String.valueOf(player.getHealth()));
-		string.replaceAll("/"+l_token+ "PLAYER_DISPLAY_NAME"+r_token+"/" + regexp_modifiers, player.getDisplayName());
-		string.replaceAll("/"+l_token+ "PLAYER_X"			+r_token+"/" + regexp_modifiers, String.valueOf(player.getLocation().getBlockX()));
-		string.replaceAll("/"+l_token+ "PLAYER_Y"			+r_token+"/" + regexp_modifiers, String.valueOf(player.getLocation().getBlockY()));
-		string.replaceAll("/"+l_token+ "PLAYER_Z"			+r_token+"/" + regexp_modifiers, String.valueOf(player.getLocation().getBlockZ()));
+		string = string
+				.replaceAll(l_token+ "POSITION"			+r_token, player.getLocation().toString())
+				.replaceAll(l_token+ "PLAYERNAME"		+r_token, player.getName())
+				.replaceAll(l_token+ "PLAYERTEXT"		+r_token, playerText)
+				.replaceAll(l_token+ "INGAMETIME"		+r_token, String.valueOf(player.getWorld().getTime()))
+				.replaceAll(l_token+ "ITEM_IN_HAND"		+r_token, player.getItemInHand().getType().name())		
+				.replaceAll(l_token+ "PLAYER_ISOP"		+r_token, "IsOP():" + (player.isOp() ? "Oui" : "Non"))
+				.replaceAll(l_token+ "PLAYER_IP"		+r_token, player.getAddress().toString())
+				.replaceAll(l_token+ "WORLD_NAME"		+r_token, player.getWorld().getName())
+				.replaceAll(l_token+ "CHUNK_X"			+r_token, String.valueOf(player.getWorld().getChunkAt(player.getLocation()).getX()))
+				.replaceAll(l_token+ "CHUNK_Z"			+r_token, String.valueOf(player.getWorld().getChunkAt(player.getLocation()).getZ()))
+				.replaceAll(l_token+ "PLAYER_HEALTH"	+r_token, String.valueOf(player.getHealth()))
+				.replaceAll(l_token+ "PLAYER_DISPLAY_NAME"+r_token, player.getDisplayName())
+				.replaceAll(l_token+ "PLAYER_X"			+r_token, String.valueOf(player.getLocation().getBlockX()))
+				.replaceAll(l_token+ "PLAYER_Y"			+r_token, String.valueOf(player.getLocation().getBlockY()))
+				.replaceAll(l_token+ "PLAYER_Z"			+r_token, String.valueOf(player.getLocation().getBlockZ()));
 
 		return string;
 	}
