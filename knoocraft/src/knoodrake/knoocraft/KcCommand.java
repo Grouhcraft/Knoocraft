@@ -55,7 +55,7 @@ public class KcCommand implements CommandExecutor {
 
 	/**
 	 * Retourne un sous-paramètre de la commande. Exemple pour <i>/kc getwool
-	 * white 64</i> getArg(1) donnera <i>white</i>, et getArg(2) <i>64</i>
+	 * white 64</i> getArg(0) donnera <i>white</i>, et getArg(1) <i>64</i>
 	 * 
 	 * @param num
 	 *            paramètre demandé (sa position)
@@ -176,6 +176,7 @@ public class KcCommand implements CommandExecutor {
 	{
 		//TEST
 		new KcMail("knoodrake@gmail.com","knoodrake@gmail.com", getArg(0), player, true);  
+		say("message envoye a knoodrake@gmail.com: " + getArg(0));
 		return true;
 	}
 
