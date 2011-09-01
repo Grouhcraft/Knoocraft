@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import Utils.KcMail;
 import Utils.KcMessaging;
 import Utils.KcStrings;
 
@@ -170,6 +171,13 @@ public class KcCommand implements CommandExecutor {
 
 		return true;
 	}
+	
+	public boolean cmd_mail()
+	{
+		//TEST
+		new KcMail("knoodrake@gmail.com","knoodrake@gmail.com", getArg(0), player, true);  
+		return true;
+	}
 
 	/**
 	 * Remplace certains types de blocs par d'autre, choisis dans les fichiers
@@ -280,8 +288,7 @@ public class KcCommand implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] split) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
 		this.args = split;
 		this.player = (Player) sender;
 
@@ -303,8 +310,9 @@ public class KcCommand implements CommandExecutor {
 					{ "give", "g" },
 					{ "eyetp", "etp" }, 
 					{ "orient", "orientation", "compass" },
-					{ "superspeed", "speed", "s"},
-					{ "tp" }
+					{ "superspeed", "speed", "s"}, ///@<FIXME a faire ou effacer
+					{ "tp" }, ///@<FIXME a faire ou effacer
+					{ "mail", "sendmail" }
 				});
 		}
 		
