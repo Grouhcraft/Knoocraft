@@ -1,17 +1,19 @@
 package Utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.logging.Level;
 
 import knoodrake.knoocraft.R;
 import knoodrake.knoocraft.knoocraft;
 
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import com.avaje.ebeaninternal.server.lib.util.MailMessage;
 import com.avaje.ebeaninternal.server.lib.util.MailSender;
-
-
+ 
 public class KcMail {
 	private MailMessage mail = new MailMessage();
 	private final knoocraft plugin;
@@ -26,7 +28,7 @@ public class KcMail {
 	private Player player = null;
 	private String playerText = "";
 	
-	public KcMail(knoocraft plugin, String from, String to, String text, Player senderplayer, Boolean includesDebugInfos) {
+	public KcMail(knoocraft plugin, String from, String to, String text, Player senderplayer, Boolean includesDebugInfos) throws IOException {
 		player = senderplayer;
 		playerText = text;
 		this.plugin = plugin;
@@ -64,9 +66,23 @@ public class KcMail {
 		}
 	}
 	
-	private String getTextFileContent(String templateFilePath2) {
-		// TODO Auto-generated method stub
-		return null;
+	private String getTextFileContent(String templateFilePath2) throws IOException {
+		File file = new File(templateFilePath2);
+		StringBuilder fileContent = new StringBuilder();		
+    	if(file.exists() && file.isFile() && file.canRead()) 
+    	{
+    		String line = null;
+    		BufferedReader input =  new BufferedReader(new FileReader(file));
+            while (( line = input.readLine()) != null){
+            	fileContent.append(line);
+            	fileContent.append(System.getProperty("line.separator"));
+              }
+    	}
+    	else 
+    	{
+    		throw new IOException("Le fichier \"" + file.getAbsolutePath() + "\"tpl n'existe pas ou il n'est pas accessible en lecture");
+    	}
+		return fileContent.toString();
 	}
 
 	private String replacer(String string) 

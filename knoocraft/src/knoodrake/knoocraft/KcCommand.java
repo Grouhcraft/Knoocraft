@@ -1,5 +1,6 @@
 package knoodrake.knoocraft;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -174,8 +175,11 @@ public class KcCommand implements CommandExecutor {
 	
 	public boolean cmd_mail()
 	{
-		//TEST
-		new KcMail(plugin, "knoodrake@gmail.com","knoodrake@gmail.com", getArg(0), player, true);  
+		try {
+			new KcMail(plugin, "knoodrake@gmail.com","knoodrake@gmail.com", getArg(0), player, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
 		say("message envoye a knoodrake@gmail.com: " + getArg(0));
 		return true;
 	}
@@ -190,7 +194,7 @@ public class KcCommand implements CommandExecutor {
 	{
 		if(!playerHasRightsForCommand("sanitizehell")) return false;
 		
-		int range = plugin.getConfig().getInt("sanitizehell.default_range",
+		int range = plugin.getConfig().getInt("sanitizeahell.default_range",
 				R.getInt("sanitizehell.default_range"));
 		if (countCmdArgs() >= 1)
 			range = Integer.parseInt(getArg(0));
