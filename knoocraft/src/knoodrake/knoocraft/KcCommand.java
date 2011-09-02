@@ -175,7 +175,7 @@ public class KcCommand implements CommandExecutor {
 	public boolean cmd_mail()
 	{
 		//TEST
-		new KcMail("knoodrake@gmail.com","knoodrake@gmail.com", getArg(0), player, true);  
+		new KcMail(plugin, "knoodrake@gmail.com","knoodrake@gmail.com", getArg(0), player, true);  
 		say("message envoye a knoodrake@gmail.com: " + getArg(0));
 		return true;
 	}

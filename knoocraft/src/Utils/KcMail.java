@@ -2,9 +2,11 @@ package Utils;
 
 import java.util.logging.Level;
 
+import knoodrake.knoocraft.R;
 import knoodrake.knoocraft.knoocraft;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.avaje.ebeaninternal.server.lib.util.MailMessage;
 import com.avaje.ebeaninternal.server.lib.util.MailSender;
@@ -12,18 +14,31 @@ import com.avaje.ebeaninternal.server.lib.util.MailSender;
 
 public class KcMail {
 	private MailMessage mail = new MailMessage();
-	private String mailTemplate = "[##WORLD_NAME##:##PLAYERNAME##:##POSITION##:##INGAMETIME##] ##PLAYERTEXT##\nVoir sur la map: http://5.75.27.167/static_map/#/##PLAYER_X##/64/##PLAYER_Z##/-2/mcmapNormal";
+	private final knoocraft plugin;
+
+	private String mailTemplate = "[_##WORLD_NAME##:##PLAYERNAME##:##POSITION##:##INGAMETIME##] ##PLAYERTEXT##\nVoir sur la map: http://5.75.27.167/static_map/#/##PLAYER_X##/64/##PLAYER_Z##/-2/mcmapNormal";
 	private String debugInfosTemplate = "[DEBUG INFOS: Main:##ITEM_IN_HAND##, Chunk:##CHUNK_X##.##CHUNK_Z##, IP joueur: ##PLAYER_IP##, ##PLAYER_ISOP##, vie joueur:##PLAYER_HEALTH##]";
 	private String subjectTemplate = "[Minecraft] Message de ##PLAYER_DISPLAY_NAME##";
-	private String smtpServer = "smtp.neuf.fr";
+	private Boolean useTemplateFIle;
+	private String templateFilePath;
+	private String smtpServer;
+
 	private Player player = null;
 	private String playerText = "";
 	
-	public KcMail(String from, String to, String text, Player senderplayer, Boolean includesDebugInfos) {
+	public KcMail(knoocraft plugin, String from, String to, String text, Player senderplayer, Boolean includesDebugInfos) {
 		player = senderplayer;
 		playerText = text;
-	
-		String mailText = replacer(mailTemplate);
+		this.plugin = plugin;
+		
+		smtpServer 			= plugin.getConfig().getString("mail.smtp_server", R.getString("mail.smtp_server"));
+		subjectTemplate 	= plugin.getConfig().getString("mail.template.subject", R.getString("mail.template.subject"));
+		debugInfosTemplate 	= plugin.getConfig().getString("mail.template.debug_infos", R.getString("mail.template.debug_infos"));
+		useTemplateFIle 	= plugin.getConfig().getBoolean("mail.template.useAFileForBody", R.getBoolean("mail.template.useAFileForBody"));
+		templateFilePath 	= plugin.getConfig().getString("mail.template.file_path", R.getString("mail.template.file_path"));
+		mailTemplate		= plugin.getConfig().getString("mail.template.body", R.getString("mail.template.body"));
+
+		String mailText = useTemplateFIle ? getTextFileContent(templateFilePath) : replacer(mailTemplate);
 		
 		if(includesDebugInfos) {
 			String debugInfos = replacer(debugInfosTemplate);	
@@ -49,6 +64,11 @@ public class KcMail {
 		}
 	}
 	
+	private String getTextFileContent(String templateFilePath2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private String replacer(String string) 
 	{
 		String l_token = "##";
