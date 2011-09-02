@@ -158,12 +158,12 @@ public class knoocraft extends JavaPlugin {
         getConfig().setProperty("autoupdate.check_url", R.getString("autoupdate.check_url"));
         getConfig().setProperty("autoupdate.download_url", R.getString("autoupdate.download_url"));
         
-        getConfig().setProperty("mail.smtp_server", R.getInt("mail.smtp_server"));
-        getConfig().setProperty("mail.template.subject", R.getInt("mail.template.subject"));
-        getConfig().setProperty("mail.template.debug_infos", R.getInt("mail.template.debug_infos"));
+        getConfig().setProperty("mail.smtp_server", R.getString("mail.smtp_server"));
+        getConfig().setProperty("mail.template.subject", R.getString("mail.template.subject"));
+        getConfig().setProperty("mail.template.debug_infos", R.getString("mail.template.debug_infos"));
         getConfig().setProperty("mail.template.useAFileForBody", R.getBoolean("mail.template.useAFileForBody"));
-        getConfig().setProperty("mail.template.file_path", R.getInt("mail.template.file_path"));
-        getConfig().setProperty("mail.template.body", R.getInt("mail.template.body"));
+        getConfig().setProperty("mail.template.file_path", R.getString("mail.template.file_path"));
+        getConfig().setProperty("mail.template.body", R.getString("mail.template.body"));
         
         getConfig().save();
 	}
