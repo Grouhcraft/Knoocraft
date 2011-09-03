@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 public class knoocraft extends JavaPlugin {
     public static Logger log = Logger.getLogger("Minecraft");
     private final KnoocraftBlockListener blockListener = new KnoocraftBlockListener(this);
-    public KcConfigurationManager confManager;
+    public KcConfigurationManager confManager = new KcConfigurationManager();
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	private KcCommand kcCommand;
 	
