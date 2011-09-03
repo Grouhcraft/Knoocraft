@@ -156,7 +156,7 @@ public class KcCommand implements CommandExecutor {
 	public boolean cmd_penis() {
 		if(!playerHasRightsForCommand("penis")) return false;
 		
-		int size = plugin.getConfig().getInt("penis.default_size", R.getInt("penis.default_size"));
+		int size = plugin.getConfig("main").getInt("penis.default_size", R.getInt("penis.default_size"));
 		if (countCmdArgs() >= 1) size = Integer.parseInt(getArg(0));
 		int sizeMax = R.getInt("penis.max_size");
 		if (size > sizeMax) {
@@ -194,8 +194,7 @@ public class KcCommand implements CommandExecutor {
 	{
 		if(!playerHasRightsForCommand("sanitizehell")) return false;
 		
-		int range = plugin.getConfig().getInt("sanitizeahell.default_range",
-				R.getInt("sanitizehell.default_range"));
+		int range = plugin.getConfig("main").getInt("sanitizeahell.default_range", R.getInt("sanitizehell.default_range"));
 		if (countCmdArgs() >= 1)
 			range = Integer.parseInt(getArg(0));
 
@@ -210,10 +209,10 @@ public class KcCommand implements CommandExecutor {
 		int minY = ploc.getBlockY() - range;
 		int maxY = ploc.getBlockY() + range;
 
-		Material replacedType = Material.getMaterial(plugin.getConfig()
+		Material replacedType = Material.getMaterial(plugin.getConfig("main") 
 				.getString("sanitizehell.replacedType", Material.FIRE.name())
 				.toUpperCase());
-		Material replaceByType = Material.getMaterial(plugin.getConfig()
+		Material replaceByType = Material.getMaterial(plugin.getConfig("main")
 				.getString("sanitizehell.replaceByType",
 						Material.GLOWSTONE.name()).toUpperCase());
 

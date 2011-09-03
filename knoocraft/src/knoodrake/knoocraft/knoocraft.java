@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
@@ -24,7 +23,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 
 import org.bukkit.util.FileUtil;
-import org.bukkit.util.config.Configuration;
+import Utils.KcConfiguration;
+import Utils.KcConfigurationManager;
 
 import java.util.logging.Logger;
 /**
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 public class knoocraft extends JavaPlugin {
     public static Logger log = Logger.getLogger("Minecraft");
     private final KnoocraftBlockListener blockListener = new KnoocraftBlockListener(this);
-    public Configuration config;
+    public KcConfigurationManager confManager;
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	private KcCommand kcCommand;
 	
@@ -59,12 +59,12 @@ public class knoocraft extends JavaPlugin {
 	protected boolean isUpdateAvailable() {
 		// Try to auto update, inspired from Narrowtux GPL's code
 		// https://github.com/narrowtux/NarrowtuxLib/blob/master/src/com/narrowtux/Main/NarrowtuxLib.java
-		if(getConfig().getBoolean("autoupdate.enabled", false))
+		if(getConfig("main").getBoolean("autoupdate.enabled", false))
 		{
 			log.info( "[KnooCraft] Looking for updates..");
 			log.info( "[KnooCraft] Current version: " + getVersion());
 			try {
-				URL url = new URL(getConfig().getString("autoupdate.check_url", ""));
+				URL url = new URL(getConfig("main").getString("autoupdate.check_url", ""));
 				BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 				String str;
 				while ((str = in.readLine()) != null) {
@@ -104,8 +104,8 @@ public class knoocraft extends JavaPlugin {
             }
             File plugin = new File(directory.getPath(), R.getString("jar_name"));
             if (!plugin.exists()) {
-            	log.info( "[KnooCraft] downloading from \""+ getConfig().getString("autoupdate.download_url") +"\"");
-                URL bukkitContrib = new URL(getConfig().getString("autoupdate.download_url"));
+            	log.info( "[KnooCraft] downloading from \""+ getConfig("main").getString("autoupdate.download_url") +"\"");
+                URL bukkitContrib = new URL(getConfig("main").getString("autoupdate.download_url"));
                 HttpURLConnection con = (HttpURLConnection)(bukkitContrib.openConnection());
                 System.setProperty("http.agent", ""); //Spoofing the user agent is required to track stats
                 con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
@@ -130,42 +130,45 @@ public class knoocraft extends JavaPlugin {
     private final KnoocraftPlayerListener playerListener = new KnoocraftPlayerListener(this);
     public knoocraft() throws IOException {
     	super();
-    	new File("plugins" + File.separator + "Knoocraft" + File.separator).mkdirs();
-    	if(new File("plugins" + File.separator + "Knoocraft" + File.separator).exists()) {
-    		boolean newfile = new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml").createNewFile();
-    		if(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml").exists()) 
-    		{
-    			this.config = new Configuration(new File("plugins" + File.separator + "Knoocraft" + File.separator + "config.yml"));
-    			if(newfile)
-    				createDefaultConfig();
-    			else {
-    				this.config.load();
-    			}
-    		}
+    	String main_conf_path = "plugins" + File.separator + "Knoocraft" + File.separator + "config.yml";
+    	if(!confManager.exists("main")) {
+    		try {
+    			confManager.createConfig("main", new File(main_conf_path));
+    			createMainDefaultConfig();
+    		} catch (Exception e) {
+				// TODO: handle exception
+			}
     	}
+    	try {
+    		confManager.loadAll();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
-    private void createDefaultConfig() {
-		getConfig().setProperty("greenwooler.firstColor", R.getInt("greenwooler.firstColor"));
-        getConfig().setProperty("greenwooler.secondColor", R.getInt("greenwooler.secondColor"));
-        getConfig().setProperty("sanitizehell.default_range", R.getInt("sanitizehell.default_range"));
-        getConfig().setProperty("sanitizehell.replacedType", Material.FIRE.name().toLowerCase());
-        getConfig().setProperty("sanitizehell.replaceByType", Material.GLOWSTONE.name().toLowerCase());
-        getConfig().setProperty("penis.default_size", R.getInt("penis.default_size"));
-        getConfig().setProperty("penis.max_size", R.getInt("penis.max_size"));
-        getConfig().setProperty("penis.dist_user", R.getInt("penis.dist_user"));
-        getConfig().setProperty("autoupdate.enabled", R.getBoolean("autoupdate.enabled"));
-        getConfig().setProperty("autoupdate.check_url", R.getString("autoupdate.check_url"));
-        getConfig().setProperty("autoupdate.download_url", R.getString("autoupdate.download_url"));
+    private void createMainDefaultConfig() {
+    	getConfig("main").setProperties(new String[]{
+    			"greenwooler.firstColor",
+    			"greenwooler.secondColor",
+    			"sanitizehell.default_range",
+    			"sanitizehell.replacedType",
+    			"sanitizehell.replaceByType",
+    			"penis.default_size",
+    			"penis.max_size",
+    			"penis.dist_user",
+    			"autoupdate.enabled",
+    			"autoupdate.check_url",
+    			"autoupdate.download_url",
+    			"mail.smtp_server",
+    			"mail.template.subject",
+    			"mail.template.debug_infos",
+    			"mail.template.useAFileForBody",
+    			"mail.template.file_path",
+    			"mail.template.body"
+    		});
         
-        getConfig().setProperty("mail.smtp_server", R.getString("mail.smtp_server"));
-        getConfig().setProperty("mail.template.subject", R.getString("mail.template.subject"));
-        getConfig().setProperty("mail.template.debug_infos", R.getString("mail.template.debug_infos"));
-        getConfig().setProperty("mail.template.useAFileForBody", R.getBoolean("mail.template.useAFileForBody"));
-        getConfig().setProperty("mail.template.file_path", R.getString("mail.template.file_path"));
-        getConfig().setProperty("mail.template.body", R.getString("mail.template.body"));
-        
-        getConfig().save();
+        getConfig("main").save();
 	}
     
     //TODO: Utiliser un fichier de config.. 
@@ -179,8 +182,14 @@ public class knoocraft extends JavaPlugin {
 		return messages.get(string);
 	}
 
-    public Configuration getConfig() {
-		return config;
+    public KcConfiguration getConfig(String confName) {
+		try {
+			return confManager.getConfig(confName);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public KcCommand getKcCommand() {

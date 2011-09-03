@@ -10,6 +10,32 @@ import java.util.ListResourceBundle;
  * chaine manquante c'est un peu Hard je trouve.
  */
 public class R {
+	
+	public static String get(String key, String bundleName) {
+		String val = ListResourceBundle.getBundle(bundleName).getString(key);
+		return val;
+	}
+
+	public static int getInt(String key, String bundleName) throws NumberFormatException {
+		String stringVal = ListResourceBundle.getBundle(bundleName).getString(key);
+		return Integer.parseInt(stringVal);
+	}
+
+	public static String getString(String key, String bundleName) {
+		String stringVal = ListResourceBundle.getBundle(bundleName).getString(key).toString();
+		return stringVal;
+	}
+
+	public static Object getObject(String key, String bundleName) {
+		return ListResourceBundle.getBundle(bundleName).getObject(key);
+	}
+	
+	public static boolean getBoolean(String key, String bundleName) {
+		String stringVal = ListResourceBundle.getBundle(bundleName).getString(key).toString();
+		return Boolean.parseBoolean(stringVal);
+	}
+	
+	/* ------------------------------------------------------------- */
 
 	public static String get(String key) {
 		String val = ListResourceBundle.getBundle("knoocraft").getString(key);

@@ -31,10 +31,8 @@ public class KnoocraftPlayerListener extends PlayerListener {
 		/* ------------------------------------------------------ */
 		if (KnoocraftPlayerListener.greenwooling) {
 
-			firstColor = plugin.getConfig().getInt("greenwooler.firstColor",
-					R.getInt("greenwooler.firstColor"));
-			secondColor = plugin.getConfig().getInt("greenwooler.secondColor",
-					R.getInt("greenwooler.secondColor"));
+			firstColor = plugin.getConfig("main").getInt("greenwooler.firstColor", 	R.getInt("greenwooler.firstColor"));
+			secondColor = plugin.getConfig("main").getInt("greenwooler.secondColor", R.getInt("greenwooler.secondColor"));
 
 			Location playerFrom = event.getFrom().clone();
 			Location playerTo = event.getTo();

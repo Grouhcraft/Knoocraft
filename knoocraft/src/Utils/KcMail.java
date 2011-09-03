@@ -33,14 +33,14 @@ public class KcMail {
 		playerText = text;
 		this.plugin = plugin;
 		
-		smtpServer 			= plugin.getConfig().getString("mail.smtp_server", R.getString("mail.smtp_server"));
-		subjectTemplate 	= plugin.getConfig().getString("mail.template.subject", R.getString("mail.template.subject"));
-		debugInfosTemplate 	= plugin.getConfig().getString("mail.template.debug_infos", R.getString("mail.template.debug_infos"));
-		useTemplateFIle 	= plugin.getConfig().getBoolean("mail.template.useAFileForBody", R.getBoolean("mail.template.useAFileForBody"));
-		templateFilePath 	= plugin.getConfig().getString("mail.template.file_path", R.getString("mail.template.file_path"));
-		mailTemplate		= plugin.getConfig().getString("mail.template.body", R.getString("mail.template.body"));
+		smtpServer 			= plugin.getConfig("main").getString("mail.smtp_server", R.getString("mail.smtp_server"));
+		subjectTemplate 	= plugin.getConfig("main").getString("mail.template.subject", R.getString("mail.template.subject"));
+		debugInfosTemplate 	= plugin.getConfig("main").getString("mail.template.debug_infos", R.getString("mail.template.debug_infos"));
+		useTemplateFIle 	= plugin.getConfig("main").getBoolean("mail.template.useAFileForBody", R.getBoolean("mail.template.useAFileForBody"));
+		templateFilePath 	= plugin.getConfig("main").getString("mail.template.file_path", R.getString("mail.template.file_path"));
+		mailTemplate		= plugin.getConfig("main").getString("mail.template.body", R.getString("mail.template.body"));
 
-		String mailText = useTemplateFIle ? getTextFileContent(templateFilePath) : replacer(mailTemplate);
+		String mailText = useTemplateFIle ? KcFileUtils.getTextFileContent(templateFilePath) : replacer(mailTemplate);
 		
 		if(includesDebugInfos) {
 			String debugInfos = replacer(debugInfosTemplate);	
@@ -64,25 +64,6 @@ public class KcMail {
 		catch (Exception e) {
 			knoocraft.log.log(Level.WARNING, "Impossible d envoyer le mail: " + e.getMessage());
 		}
-	}
-	
-	private String getTextFileContent(String templateFilePath2) throws IOException {
-		File file = new File(templateFilePath2);
-		StringBuilder fileContent = new StringBuilder();		
-    	if(file.exists() && file.isFile() && file.canRead()) 
-    	{
-    		String line = null;
-    		BufferedReader input =  new BufferedReader(new FileReader(file));
-            while (( line = input.readLine()) != null){
-            	fileContent.append(line);
-            	fileContent.append(System.getProperty("line.separator"));
-              }
-    	}
-    	else 
-    	{
-    		throw new IOException("Le fichier \"" + file.getAbsolutePath() + "\"tpl n'existe pas ou il n'est pas accessible en lecture");
-    	}
-		return fileContent.toString();
 	}
 
 	private String replacer(String string) 
