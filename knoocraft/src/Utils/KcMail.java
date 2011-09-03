@@ -14,9 +14,9 @@ public class KcMail {
 	private MailMessage mail = new MailMessage();
 	private final knoocraft plugin;
 
-	private String mailTemplate = "[_##WORLD_NAME##:##PLAYERNAME##:##POSITION##:##INGAMETIME##] ##PLAYERTEXT##\nVoir sur la map: http://5.75.27.167/static_map/#/##PLAYER_X##/64/##PLAYER_Z##/-2/mcmapNormal";
-	private String debugInfosTemplate = "[DEBUG INFOS: Main:##ITEM_IN_HAND##, Chunk:##CHUNK_X##.##CHUNK_Z##, IP joueur: ##PLAYER_IP##, ##PLAYER_ISOP##, vie joueur:##PLAYER_HEALTH##]";
-	private String subjectTemplate = "[Minecraft] Message de ##PLAYER_DISPLAY_NAME##";
+	private String mailTemplate;
+	private String debugInfosTemplate;
+	private String subjectTemplate;
 	private Boolean useTemplateFIle;
 	private String templateFilePath;
 	private String smtpServer;
