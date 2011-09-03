@@ -320,9 +320,11 @@ public class KcCommand implements CommandExecutor {
 		for (String cmdName : aliases.keySet()) {
 			if(isCommandOrAlias(mainCmd, cmdName)) {
 				java.lang.reflect.Method method;
+				Boolean ok = false;
 				try {
 				  method = this.getClass().getMethod("cmd_" + cmdName);
-				  return (Boolean) method.invoke(this);
+				  method.invoke(this);
+				  ok = true;
 				} 
 				catch (SecurityException e) {} 
 				catch (NoSuchMethodException e) {
@@ -331,6 +333,7 @@ public class KcCommand implements CommandExecutor {
 				catch (IllegalArgumentException e) {}
 				catch (IllegalAccessException e) {}
 				catch (InvocationTargetException e) {}
+				if(ok) return true;
 			}
 		}
 		return cmd_unknowncmd();
@@ -396,14 +399,23 @@ public class KcCommand implements CommandExecutor {
 				int id_blocktype = Integer.parseInt(tmp);
 				material = Material.getMaterial(id_blocktype);
 			} catch (Exception e) {
-				material = Material
-						.getMaterial(tmp.toUpperCase(Locale.ENGLISH));
+				material = Material.getMaterial(tmp.toUpperCase(Locale.ENGLISH));
 			}
-			int qtt = (countCmdArgs() > 1) ? Integer.parseInt(getArg(1)) : 1;
+			if(material == null) {
+				say(KcStrings.getString("give.msg.unknown"));
+				return true;
+			}
+			
+			int qtt = 0;
+			try {
+				qtt = (countCmdArgs() > 1) ? Integer.parseInt(getArg(1)) : 1;
+			} catch (Exception e) {
+				say(KcStrings.getString("give.msg.unknown"));
+				return true;				
+			}
 			boolean in_chest = false;
 			if (countCmdArgs() > 2)
-				if (getArg(2).equalsIgnoreCase("inchest"))
-					in_chest = true;
+				if (getArg(2).equalsIgnoreCase("inchest")) in_chest = true;
 			/* ----------------------------------------
 			 *
 			 * Code 
@@ -422,8 +434,7 @@ public class KcCommand implements CommandExecutor {
 
 			if (in_chest) {
 				((Block) destination).setType(Material.CHEST);
-				((Chest) ((Block) destination).getState()).getInventory()
-						.addItem(given);
+				((Chest) ((Block) destination).getState()).getInventory().addItem(given);
 			} else
 				((PlayerInventory) destination).addItem(given);
 
