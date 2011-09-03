@@ -26,6 +26,7 @@ import org.bukkit.util.FileUtil;
 import Utils.KcConfiguration;
 import Utils.KcConfigurationManager;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
 * KnooCraft plugin
@@ -136,39 +137,47 @@ public class knoocraft extends JavaPlugin {
     			confManager.createConfig("main", new File(main_conf_path));
     			createMainDefaultConfig();
     		} catch (Exception e) {
-				// TODO: handle exception
+				log.log(Level.SEVERE, "Impossible de créer/charger la configuration principale: " + e.getMessage());
+				e.printStackTrace();
 			}
     	}
     	try {
     		confManager.loadAll();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.log(Level.SEVERE, "Impossible de charger l'ensemble des configurations: " + e.getMessage());
 			e.printStackTrace();
 		}
     }
 
     private void createMainDefaultConfig() {
-    	getConfig("main").setProperties(new String[]{
-    			"greenwooler.firstColor",
-    			"greenwooler.secondColor",
-    			"sanitizehell.default_range",
-    			"sanitizehell.replacedType",
-    			"sanitizehell.replaceByType",
-    			"penis.default_size",
-    			"penis.max_size",
-    			"penis.dist_user",
-    			"autoupdate.enabled",
-    			"autoupdate.check_url",
-    			"autoupdate.download_url",
-    			"mail.smtp_server",
-    			"mail.template.subject",
-    			"mail.template.debug_infos",
-    			"mail.template.useAFileForBody",
-    			"mail.template.file_path",
-    			"mail.template.body"
-    		});
-        
-        getConfig("main").save();
+    	try {
+	    	getConfig("main").setProperties(new String[]{
+	    			"greenwooler.firstColor",
+	    			"greenwooler.secondColor",
+	    			"sanitizehell.default_range",
+	    			"sanitizehell.replacedType",
+	    			"sanitizehell.replaceByType",
+	    			"penis.default_size",
+	    			"penis.max_size",
+	    			"penis.dist_user",
+	    			"autoupdate.enabled",
+	    			"autoupdate.check_url",
+	    			"autoupdate.download_url",
+	    			"mail.smtp_server",
+	    			"mail.template.subject",
+	    			"mail.template.debug_infos",
+	    			"mail.template.useAFileForBody",
+	    			"mail.template.file_path",
+	    			"mail.template.body"
+	    		});
+	        
+	    	getConfig("main").save();
+	        getConfig("main").load();
+	        
+    	} catch (Exception e) {
+    		log.log(Level.WARNING, "Impossible de créer la configuration par défaut: " + e.getMessage());
+    		e.printStackTrace();
+		}
 	}
     
     //TODO: Utiliser un fichier de config.. 

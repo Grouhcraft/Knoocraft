@@ -35,7 +35,7 @@ public class KcConfigurationManager {
 		if(exists(config_name)) {
 			configs.get(config_name).load();
 		}
-		throw new Exception("La configuration "+config_name+" n'existe pas");
+		else throw new Exception("La configuration "+config_name+" n'existe pas");
 	}
 
 	public void loadAll() throws Exception {
@@ -44,7 +44,8 @@ public class KcConfigurationManager {
 			try {
 				loadConfig(confName);
 			} catch (Exception e) {
-				loading_exceptions.add(confName + ": " + e.getLocalizedMessage());
+			//	loading_exceptions.add(confName + ": " + e.getLocalizedMessage());
+				throw new Exception(e.getLocalizedMessage());
 			}
 		}
 		if(!loading_exceptions.isEmpty())
