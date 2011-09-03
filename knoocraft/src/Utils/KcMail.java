@@ -1,12 +1,8 @@
 package Utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import knoodrake.knoocraft.R;
 import knoodrake.knoocraft.knoocraft;
 
 import org.bukkit.entity.Player;
@@ -33,12 +29,12 @@ public class KcMail {
 		playerText = text;
 		this.plugin = plugin;
 		
-		smtpServer 			= plugin.getConfig("main").getString("mail.smtp_server", R.getString("mail.smtp_server"));
-		subjectTemplate 	= plugin.getConfig("main").getString("mail.template.subject", R.getString("mail.template.subject"));
-		debugInfosTemplate 	= plugin.getConfig("main").getString("mail.template.debug_infos", R.getString("mail.template.debug_infos"));
-		useTemplateFIle 	= plugin.getConfig("main").getBoolean("mail.template.useAFileForBody", R.getBoolean("mail.template.useAFileForBody"));
-		templateFilePath 	= plugin.getConfig("main").getString("mail.template.file_path", R.getString("mail.template.file_path"));
-		mailTemplate		= plugin.getConfig("main").getString("mail.template.body", R.getString("mail.template.body"));
+		smtpServer 			= plugin.getConfig("main").getString("mail.smtp_server");
+		subjectTemplate 	= plugin.getConfig("main").getString("mail.template.subject");
+		debugInfosTemplate 	= plugin.getConfig("main").getString("mail.template.debug_infos");
+		useTemplateFIle 	= plugin.getConfig("main").getBoolean("mail.template.useAFileForBody");
+		templateFilePath 	= plugin.getConfig("main").getString("mail.template.file_path");
+		mailTemplate		= plugin.getConfig("main").getString("mail.template.body");
 
 		String mailText = useTemplateFIle ? KcFileUtils.getTextFileContent(templateFilePath) : replacer(mailTemplate);
 		

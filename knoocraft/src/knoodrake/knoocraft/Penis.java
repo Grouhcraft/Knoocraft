@@ -6,6 +6,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import Utils.KcStrings;
+
 public class Penis {
 	private Player player;
 	private Location ploc;
@@ -15,7 +17,7 @@ public class Penis {
 
 	public Penis(knoocraft plugin, Player player) {
 		this.plugin = plugin;
-		this.size = R.getInt("penis.default_size");
+		this.size = plugin.getConfig("main").getInt("penis.default_size");
 		this.player = player;
 		this.ploc = player.getLocation();
 		this.world = player.getWorld();
@@ -168,13 +170,13 @@ public class Penis {
 			// x est constant
 			int xCst;
 			if (cardinalPoint == Orientation.CardinalPoints.NORTH) {
-				xCst = ploc.getBlockX() - 1 - R.getInt("penis.dist_user");
+				xCst = ploc.getBlockX() - 1 - plugin.getConfig("main").getInt("penis.dist_user");
 			} else {
-				xCst = ploc.getBlockX() + 1 + R.getInt("penis.dist_user");
+				xCst = ploc.getBlockX() + 1 + plugin.getConfig("main").getInt("penis.dist_user");
 			}
 			// On teste si la place est libre
 			if (!isLibreZ(minZ, cou1Z, cou2Z, maxZ, minY, maxcouY, maxY, xCst)) {
-				plugin.getKcCommand().say(R.get("penis.msg.no_space"));
+				plugin.getKcCommand().say(KcStrings.getString("penis.msg.no_space"));
 			} else {
 				// On construit la bite
 				biteZ(minZ, cou1Z, cou2Z, maxZ, minY, maxcouY, minglaY, maxY,
@@ -198,17 +200,16 @@ public class Penis {
 			// z est constant
 			int zCst;
 			if (cardinalPoint == Orientation.CardinalPoints.EAST) {
-				zCst = ploc.getBlockZ() - 1 - R.getInt("penis.dist_user");
+				zCst = ploc.getBlockZ() - 1 - plugin.getConfig("main").getInt("penis.dist_user");
 			} else {
-				zCst = ploc.getBlockZ() + 1 + R.getInt("penis.dist_user");
+				zCst = ploc.getBlockZ() + 1 + plugin.getConfig("main").getInt("penis.dist_user");
 			}
 			// On teste si la place est libre
 			if (!isLibreX(minX, cou1X, cou2X, maxX, minY, maxcouY, maxY, zCst)) {
-				this.plugin.getKcCommand().say(R.get("penis.msg.no_space"));
+				this.plugin.getKcCommand().say(KcStrings.getString("penis.msg.no_space"));
 			} else {
 				// On construit la bite
-				biteX(minX, cou1X, cou2X, maxX, minY, maxcouY, minglaY, maxY,
-						zCst);
+				biteX(minX, cou1X, cou2X, maxX, minY, maxcouY, minglaY, maxY, zCst);
 			}
 		}
 		return true;

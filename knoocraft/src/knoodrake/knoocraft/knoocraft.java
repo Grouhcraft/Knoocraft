@@ -130,9 +130,9 @@ public class knoocraft extends JavaPlugin {
     private final KnoocraftPlayerListener playerListener = new KnoocraftPlayerListener(this);
     public knoocraft() throws IOException {
     	super();
-    	String main_conf_path = "plugins" + File.separator + "Knoocraft" + File.separator + "config.yml";
     	if(!confManager.exists("main")) {
     		try {
+    	    	String main_conf_path = "plugins" + File.separator + "Knoocraft" + File.separator + "config.yml";
     			confManager.createConfig("main", new File(main_conf_path));
     			createMainDefaultConfig();
     		} catch (Exception e) {

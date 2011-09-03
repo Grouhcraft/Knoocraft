@@ -65,8 +65,16 @@ public class KcConfiguration {
 	public Boolean getBoolean(String string, Boolean defaultValue) {
 		return config.getBoolean(string, defaultValue);
 	}
+	
+	public Boolean getBoolean(String string) {
+		return config.getBoolean(string, (Boolean)getDefaultValue(string));
+	}
 
 	public int getInt(String string, int int1) {
 		return config.getInt(string, int1);
 	}	
+	
+	public int getInt(String string ) {
+		return config.getInt(string, (Integer)getDefaultValue(string));
+	}
 }

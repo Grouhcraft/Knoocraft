@@ -32,7 +32,6 @@ public class KcCommand implements CommandExecutor {
 	private Player player = null;
 	private HashMap<String, ArrayList<String>> aliases = new HashMap<String, ArrayList<String>>();
 	private boolean SuperSpeeded = false;
-	private KcTeleportation teleport = new KcTeleportation();
 
 	public KcCommand(knoocraft plugin) {
 		this.plugin = plugin;
@@ -101,23 +100,23 @@ public class KcCommand implements CommandExecutor {
 		colors.put("black", (short) 15);
 
 		if (getArg(0).equalsIgnoreCase("list")) {
-			say(R.get("getwool.list.title"));
-			say(R.get("getwool.list.white"));
-			say(R.get("getwool.list.orange"));
-			say(R.get("getwool.list.magenta"));
-			say(R.get("getwool.list.lightblue"));
-			say(R.get("getwool.list.yellow"));
-			say(R.get("getwool.list.lightgreen"));
-			say(R.get("getwool.list.pink"));
-			say(R.get("getwool.list.gray"));
-			say(R.get("getwool.list.lightgray"));
-			say(R.get("getwool.list.cyan"));
-			say(R.get("getwool.list.purple"));
-			say(R.get("getwool.list.blue"));
-			say(R.get("getwool.list.brown"));
-			say(R.get("getwool.list.darkgreen"));
-			say(R.get("getwool.list.red"));
-			say(R.get("getwool.list.black"));
+			say(KcStrings.getString("getwool.list.title"));
+			say(KcStrings.getString("getwool.list.white"));
+			say(KcStrings.getString("getwool.list.orange"));
+			say(KcStrings.getString("getwool.list.magenta"));
+			say(KcStrings.getString("getwool.list.lightblue"));
+			say(KcStrings.getString("getwool.list.yellow"));
+			say(KcStrings.getString("getwool.list.lightgreen"));
+			say(KcStrings.getString("getwool.list.pink"));
+			say(KcStrings.getString("getwool.list.gray"));
+			say(KcStrings.getString("getwool.list.lightgray"));
+			say(KcStrings.getString("getwool.list.cyan"));
+			say(KcStrings.getString("getwool.list.purple"));
+			say(KcStrings.getString("getwool.list.blue"));
+			say(KcStrings.getString("getwool.list.brown"));
+			say(KcStrings.getString("getwool.list.darkgreen"));
+			say(KcStrings.getString("getwool.list.red"));
+			say(KcStrings.getString("getwool.list.black"));
 		} else {
 			int amount = 1;
 			String color = "";
@@ -140,8 +139,8 @@ public class KcCommand implements CommandExecutor {
 						colors.get(color.toLowerCase()));
 				inventory.addItem(coloredWool);
 			} else {
-				say(R.get("getwool.unknown.title") + color);
-				say(R.get("getwool.unknown.details"));
+				say(KcStrings.getString("getwool.unknown.title") + color);
+				say(KcStrings.getString("getwool.unknown.details"));
 				return false;
 			}
 		}
@@ -156,16 +155,16 @@ public class KcCommand implements CommandExecutor {
 	public boolean cmd_penis() {
 		if(!playerHasRightsForCommand("penis")) return false;
 		
-		int size = plugin.getConfig("main").getInt("penis.default_size", R.getInt("penis.default_size"));
+		int size = plugin.getConfig("main").getInt("penis.default_size");
 		if (countCmdArgs() >= 1) size = Integer.parseInt(getArg(0));
 		int sizeMax = R.getInt("penis.max_size");
 		if (size > sizeMax) {
-			say(R.get("penis.msg.too_big.1") + size
-					+ R.get("penis.msg.too_big.2") + sizeMax
-					+ R.get("penis.msg.too_big.3"));
+			say(KcStrings.getString("penis.msg.too_big.1") + size
+					+ KcStrings.getString("penis.msg.too_big.2") + sizeMax
+					+ KcStrings.getString("penis.msg.too_big.3"));
 			size = sizeMax;
 		}
-		say(R.get("penis.msg.size") + size);
+		say(KcStrings.getString("penis.msg.size") + size);
 
 		Penis penis = new Penis(plugin, player, size);
 		penis.build();
@@ -194,7 +193,7 @@ public class KcCommand implements CommandExecutor {
 	{
 		if(!playerHasRightsForCommand("sanitizehell")) return false;
 		
-		int range = plugin.getConfig("main").getInt("sanitizeahell.default_range", R.getInt("sanitizehell.default_range"));
+		int range = plugin.getConfig("main").getInt("sanitizeahell.default_range");
 		if (countCmdArgs() >= 1)
 			range = Integer.parseInt(getArg(0));
 
@@ -209,12 +208,8 @@ public class KcCommand implements CommandExecutor {
 		int minY = ploc.getBlockY() - range;
 		int maxY = ploc.getBlockY() + range;
 
-		Material replacedType = Material.getMaterial(plugin.getConfig("main") 
-				.getString("sanitizehell.replacedType", Material.FIRE.name())
-				.toUpperCase());
-		Material replaceByType = Material.getMaterial(plugin.getConfig("main")
-				.getString("sanitizehell.replaceByType",
-						Material.GLOWSTONE.name()).toUpperCase());
+		Material replacedType = Material.getMaterial(plugin.getConfig("main").getString("sanitizehell.replacedType"));
+		Material replaceByType = Material.getMaterial(plugin.getConfig("main").getString("sanitizehell.replaceByType"));
 
 		int count_changes = 0;
 		for (int y = minY; y < maxY; y++) {
@@ -228,10 +223,10 @@ public class KcCommand implements CommandExecutor {
 				}
 			}
 		}
-		say(R.get("sanitizehell.msg.success.1") + count_changes
-				+ R.get("sanitizehell.msg.success.2")
+		say(KcStrings.getString("sanitizehell.msg.success.1") + count_changes
+				+ KcStrings.getString("sanitizehell.msg.success.2")
 				+ replacedType.name().toLowerCase()
-				+ R.get("sanitizehell.msg.success.3")
+				+ KcStrings.getString("sanitizehell.msg.success.3")
 				+ replaceByType.name().toLowerCase() + " !");
 		return true;
 	}
@@ -242,18 +237,18 @@ public class KcCommand implements CommandExecutor {
 	public boolean cmd_help() {
 		say(R.get("help.title"));
 		if (countCmdArgs() == 0) {
-			say(R.get("help.cmd.title"));
-			say(R.get("help.cmd.help"));
-			say(R.get("help.cmd.help_cmd"));
-			say(R.get("help.cmd.greenwooler"));
-			say(R.get("help.cmd.sanitizehell"));
-			say(R.get("help.cmd.getwool"));
-			say(R.get("help.cmd.listalias"));
-			say(R.get("help.cmd.give"));
-			say(R.get("help.cmd.eyetp"));
-			say(R.get("help.cmd.penis"));
+			say(KcStrings.getString("help.cmd.title"));
+			say(KcStrings.getString("help.cmd.help"));
+			say(KcStrings.getString("help.cmd.help_cmd"));
+			say(KcStrings.getString("help.cmd.greenwooler"));
+			say(KcStrings.getString("help.cmd.sanitizehell"));
+			say(KcStrings.getString("help.cmd.getwool"));
+			say(KcStrings.getString("help.cmd.listalias"));
+			say(KcStrings.getString("help.cmd.give"));
+			say(KcStrings.getString("help.cmd.eyetp"));
+			say(KcStrings.getString("help.cmd.penis"));
 		} else {
-			say(R.get("help.cmd.unknown"));
+			say(KcStrings.getString("help.cmd.unknown"));
 		}
 		return true;
 	}
@@ -264,9 +259,9 @@ public class KcCommand implements CommandExecutor {
 	 * @return
 	 */
 	public boolean cmd_unknowncmd() {
-		say(R.get("unknown_cmd.title"));
-		say(R.get("unknown_cmd.details.1") + this.args[0]
-				+ R.get("unknown_cmd.details.2"));
+		say(KcStrings.getString("unknown_cmd.title"));
+		say(KcStrings.getString("unknown_cmd.details.1") + this.args[0]
+				+ KcStrings.getString("unknown_cmd.details.2"));
 		return true;
 	}
 	
@@ -315,7 +310,6 @@ public class KcCommand implements CommandExecutor {
 					{ "eyetp", "etp" }, 
 					{ "orient", "orientation", "compass" },
 					{ "superspeed", "speed", "s"}, ///@<FIXME a faire ou effacer
-					{ "tp" }, ///@<FIXME a faire ou effacer
 					{ "mail", "sendmail" }
 				});
 		}
@@ -341,32 +335,6 @@ public class KcCommand implements CommandExecutor {
 		}
 		return cmd_unknowncmd();
 	}
-	
-	public void cmd_tp() 
-	{
-		if(countCmdArgs() == 0) return;
-		String action = getArg(0).toLowerCase();
-		
-		if(action.equals("add"))
-		{
-			
-		}
-		
-		if(action.equals("del"))
-		{
-			
-		}
-		
-		if(action.equals("list"))
-		{
-			
-		}
-		
-		if(action.equals("changeowner"))
-		{
-			
-		}
-	}
 
 	/**
 	 * Téléporte si possible le joueur à l'emplacement visée sous le curseur
@@ -391,15 +359,15 @@ public class KcCommand implements CommandExecutor {
 		Orientation orientation = new Orientation(player);
 		CardinalPoints cardinalPoint = orientation.dirEye();
 		if (cardinalPoint == Orientation.CardinalPoints.NORTH) {
-			say(R.get("orientation.north"));
+			say(KcStrings.getString("orientation.north"));
 		} else {
 			if (cardinalPoint == Orientation.CardinalPoints.SOUTH) {
-				say(R.get("orientation.south"));
+				say(KcStrings.getString("orientation.south"));
 			} else {
 				if (cardinalPoint == Orientation.CardinalPoints.EAST) {
-					say(R.get("orientation.east"));
+					say(KcStrings.getString("orientation.east"));
 				} else {
-					say(R.get("orientation.west"));
+					say(KcStrings.getString("orientation.west"));
 				}
 			}
 		}
@@ -444,13 +412,13 @@ public class KcCommand implements CommandExecutor {
 
 			Object destination;
 			ItemStack given = null;
-			destination = in_chest ? (Object) player.getLocation().getBlock()
+			destination = in_chest ? 
+					  (Object) player.getLocation().getBlock()
 					: (Object) player.getInventory();
 
 			given = new ItemStack(material, qtt);
 
-			say(in_chest ? R.get("give.msg.chest") : R
-					.get("give.msg.inventory"));
+			say(in_chest ? KcStrings.getString("give.msg.chest") : KcStrings.getString("give.msg.inventory"));
 
 			if (in_chest) {
 				((Block) destination).setType(Material.CHEST);
@@ -460,7 +428,7 @@ public class KcCommand implements CommandExecutor {
 				((PlayerInventory) destination).addItem(given);
 
 		} else {
-			say(R.get("give.msg.unknown"));
+			say(KcStrings.getString("give.msg.unknown"));
 		}
 		return true;
 	}
@@ -484,8 +452,8 @@ public class KcCommand implements CommandExecutor {
 
 		Set<String> k = aliases.keySet();
 		for (String cmdName : k) {
-			say(R.get("list_aliases.cmd.1") + cmdName
-					+ R.get("list_aliases.cmd.2")
+			say(KcStrings.getString("list_aliases.cmd.1") + cmdName
+					+ KcStrings.getString("list_aliases.cmd.2")
 					+ aliases.get(cmdName).toString());
 		}
 		return true;
@@ -539,15 +507,15 @@ public class KcCommand implements CommandExecutor {
 			boolean OnOff = getArg(0).equalsIgnoreCase("on") ? true : false;
 			if (OnOff) {
 				KnoocraftPlayerListener.greenwooling = true;
-				say(R.get("greenwooler.msg.start"));
+				say(KcStrings.getString("greenwooler.msg.start"));
 			} else if (getArg(0).equalsIgnoreCase("off")) {
 				KnoocraftPlayerListener.greenwooling = false;
-				say(R.get("greenwooler.msg.stop"));
+				say(KcStrings.getString("greenwooler.msg.stop"));
 			} else {
-				say(R.get("greenwooler.msg.unknown"));
+				say(KcStrings.getString("greenwooler.msg.unknown"));
 			}
 		} else {
-			say(R.get("greenwooler.msg.unknown"));
+			say(KcStrings.getString("greenwooler.msg.unknown"));
 			return false;
 		}
 		return true;
